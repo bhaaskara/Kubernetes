@@ -39,7 +39,61 @@ The worker node(s) host the Pods that are the components of the application wo
 ### Control plane components
 The control plane's components make global decisions about the cluster (for example, scheduling), as well as detecting and responding to cluster events (for example, starting up a new pod when a deployment's replicas field is unsatisfied).
 
-Control plane components can be run on any machine in the cluster. However, for simplicity, set up scripts typically start all control plane components on the same machine, and do not run user containers on this machine.
+1. Kube API Server
+2. etcd
+3. Kube-scheduler
+4. Kube-control-manager
+5. Cloud-control-manager
+
+> Control plane components can be run on any machine in the cluster. However, for simplicity, set up scripts typically start all control plane components on the same machine, and do not run user containers on this machine.
 
 Control plane setup that runs across multiple VMs.
 [K8s HA](https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/high-availability/) 
+
+
+
+### Kube API Server
+The core of Kubernetes' control plane is the API server and the HTTP API that it exposes.  
+Users, the different parts of your cluster, and external components all communicate with one another through the API server.  
+The API server is the front end for the Kubernetes control plane.  
+kube-apiserver is designed to scale horizontally—that is, it scales by deploying more instances.  
+You can run several instances of kube-apiserver and balance traffic between those instances.
+
+Kubectl command’s job is to connect to kube-apiserver and communicate with it using the Kubernetes API.  
+kube-apiserver also authenticates incoming requests, determines whether they are authorized and valid, and manages admission control.  
+But it’s not just kubectl that talks with kube-apiserver. In fact, any query or change to the cluster’s state must be addressed to the kube-apiserver.
+
+### etcd
+etcd is the cluster’s database.  
+Its job is to reliably store the state of the cluster. This includes all the cluster configuration data; and more dynamic information such as what nodes are part of the cluster, what Pods should be running, and where they should be running.  
+You never interact directly with etcd; instead, kube-apiserver interacts with the database on behalf of the rest of the system.
+
+### Kube-scheduler
+Control plane component that watches for newly created Pods with no assigned node, and selects a node for them to run on.  
+But it doesn’t do the work of actually launching Pods on Nodes. Instead, whenever it discovers a Pod object that doesn’t yet have an assignment to a node, it
+chooses a node and simply writes the name of that node into the Pod object. 
+Factors taken into account for scheduling decisions include:  
+ - individual and collective resource requirements,  
+ - hardware/software/policy constraints  
+ - affinity (which cause groups of pods to prefer running on the same node)  
+ - anti-affinity (which ensure that pods do not run on the same node) specifications  
+ - data locality  
+ - inter-workload interference  
+ - deadlines
+
+### Kube-controller-manager
+Control Plane component that runs controller processes.
+kube-controller-manager has a broader job. It continuously monitors the state of a cluster through Kube-APIserver. Whenever the current state of the cluster doesn’t match the desired state, kube-controller-manager will attempt to make changes to achieve the desired state. 
+It’s called the “controller manager” because many Kubernetes objects are maintained by loops of code called controllers. These loops of code handle the process of remediation.
+
+Logically, each controller is a separate process, but to reduce complexity, they are all compiled into a single binary and run in a single process.
+Some types of these controllers are:
+ - Node controller: Responsible for noticing and responding when nodes go down.
+ - Job controller: Watches for Job objects that represent one-off tasks, then creates Pods to run those tasks to completion.
+ - Endpoints controller: Populates the Endpoints object (that is, joins Services & Pods).
+ - Service Account & Token controllers: Create default accounts and API access tokens for new namespaces.
+
+### cloud-controller-manager
+kube-cloud-manager manages controllers that interact with underlying cloud providers.  
+For example, if you manually launched a Kubernetes cluster on Google Compute Engine, kube-cloud-manager would be responsible for bringing in Google Cloud features like load balancers and storage volumes when you needed them.  
+If you are running Kubernetes on your own premises, or in a learning environment inside your own PC, the cluster does not have a cloud controller manager.
