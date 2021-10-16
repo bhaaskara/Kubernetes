@@ -52,7 +52,7 @@ Control plane setup that runs across multiple VMs.
 
 
 
-### Kube API Server
+#### Kube API Server
 The core of Kubernetes' control plane is the API server and the HTTP API that it exposes.  
 Users, the different parts of your cluster, and external components all communicate with one another through the API server.  
 The API server is the front end for the Kubernetes control plane.  
@@ -63,12 +63,12 @@ Kubectl command’s job is to connect to kube-apiserver and communicate with it 
 kube-apiserver also authenticates incoming requests, determines whether they are authorized and valid, and manages admission control.  
 But it’s not just kubectl that talks with kube-apiserver. In fact, any query or change to the cluster’s state must be addressed to the kube-apiserver.
 
-### etcd
+#### etcd
 etcd is the cluster’s database.  
 Its job is to reliably store the state of the cluster. This includes all the cluster configuration data; and more dynamic information such as what nodes are part of the cluster, what Pods should be running, and where they should be running.  
 You never interact directly with etcd; instead, kube-apiserver interacts with the database on behalf of the rest of the system.
 
-### Kube-scheduler
+#### Kube-scheduler
 Control plane component that watches for newly created Pods with no assigned node, and selects a node for them to run on.  
 But it doesn’t do the work of actually launching Pods on Nodes. Instead, whenever it discovers a Pod object that doesn’t yet have an assignment to a node, it
 chooses a node and simply writes the name of that node into the Pod object. 
@@ -81,7 +81,7 @@ Factors taken into account for scheduling decisions include:
  - inter-workload interference  
  - deadlines
 
-### Kube-controller-manager
+#### Kube-controller-manager
 Control Plane component that runs controller processes.
 kube-controller-manager has a broader job. It continuously monitors the state of a cluster through Kube-APIserver. Whenever the current state of the cluster doesn’t match the desired state, kube-controller-manager will attempt to make changes to achieve the desired state. 
 It’s called the “controller manager” because many Kubernetes objects are maintained by loops of code called controllers. These loops of code handle the process of remediation.
@@ -93,7 +93,28 @@ Some types of these controllers are:
  - Endpoints controller: Populates the Endpoints object (that is, joins Services & Pods).
  - Service Account & Token controllers: Create default accounts and API access tokens for new namespaces.
 
-### cloud-controller-manager
+#### cloud-controller-manager
 kube-cloud-manager manages controllers that interact with underlying cloud providers.  
 For example, if you manually launched a Kubernetes cluster on Google Compute Engine, kube-cloud-manager would be responsible for bringing in Google Cloud features like load balancers and storage volumes when you needed them.  
 If you are running Kubernetes on your own premises, or in a learning environment inside your own PC, the cluster does not have a cloud controller manager.
+
+### Node components
+Node components run on every node, maintaining running pods and providing the Kubernetes runtime environment.
+
+#### Kubelet
+An agent that runs on each node in the cluster. It makes sure that containers are running in a Pod.
+The kubelet takes a set of PodSpecs that are provided through various mechanisms and ensures that the containers described in those PodSpecs are running and healthy. 
+
+When the kube-apiserver wants to start a Pod on a node, it connects to that node’s kubelet.  
+Kubelet uses the container runtime to start the Pod and monitors its lifecycle, including readiness and liveness probes, and reports back to Kube-APIserver.
+
+The kubelet doesn't manage containers which were not created by Kubernetes.
+
+#### kube-proxy 
+kube-proxy is a network proxy that runs on each node in your cluster, implementing part of the Kubernetes Service concept.
+kube-proxy maintains network rules on nodes. These network rules allow network communication to your Pods from network sessions inside or outside of your cluster.
+kube-proxy uses the operating system packet filtering layer if there is one and it's available. Otherwise, kube-proxy forwards the traffic itself.
+
+#### Container runtime
+The container runtime is the software that is responsible for running containers.
+Kubernetes supports several container runtimes: Docker, containerd, CRI-O, and any implementation of the Kubernetes CRI (Container Runtime Interface).
