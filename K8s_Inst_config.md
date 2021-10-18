@@ -77,7 +77,7 @@
 ### Initialize the cluster
 8. On master node
    ```sh
-   sudo kubeadm init
+   sudo kubeadm init --ignore-preflight-errors=all  
    #Copy your join command and keep it safe.
    #Below is an example
    #kubeadm join 10.128.0.16443 --token swi0ci.jq9l75eg8lvpxz9i-discovery-token-ca-cert-hash sha256:2c3cdfa898334b0dfc0f73bbccb998d03f61252ee50f0405c85ba735ff90b5e2
