@@ -11,6 +11,14 @@ Kubernetes assigns each Pod a unique IP address. Every container within a Pod sh
 Containers within the same Pod can communicate through localhost, 127.0.0.1. A Pod can also specify a set of storage Volumes, to be shared among its containers.  
 > Be careful: Pods are not self-healing.
 
+## Container Restart Policy
+Flag | Description
+---- | ----------
+no | Do not automatically restart the container. (Default)
+on-failure | Restart the container if it exits due to an error. which manifests as non-zero exit code.
+always | Always restart the container if it stops.</br> if its manually stopped, it is restarted only when docker daemon restarts or the container it self manually restarted. 
+unless-stopped | similar to always, except when container stopped (manually or otherwise),</br> it is not restarted even after docker daemon restarts. 
+
 # Environment Variables
 When building your application stack to work on Kubernetes, the basic pod configuration is usually done by setting different environment variables. Sometimes you want to configure just a few of them for a particular pod or to define a set of environment variables that can be shared by multiple pods. Later is usually done by creating a ConfigMap as a shared resource. Instead of specifying each environment variable individually we can reference the whole config map.
 
