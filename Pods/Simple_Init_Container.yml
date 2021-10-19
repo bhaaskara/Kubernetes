@@ -1,0 +1,22 @@
+# This is a simple Pod with two init containers.
+# kubectl create -f Simple_Init_Container.yml
+# Kubectl get -f Simple_Init_Container.yml
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: myapp-pod
+  labels:
+    app: myapp
+spec:
+  containers:
+  - name: myapp-container
+    image: busybox:1.28
+    command: ['sh', '-c', 'echo The app is running! && sleep 120']
+  initContainers:
+  - name: init1
+    image: busybox:1.28
+    command: ['sh', '-c', 'echo The 1st init container is running! && sleep 120']
+  - name: init-mydb
+    image: busybox:1.28
+    command: ['sh', '-c', 'echo The 2nd init container is running! && sleep 120']
