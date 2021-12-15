@@ -3,30 +3,37 @@
 ## On Ubuntu 20.04
 ### Prechecks
 1. Check if cluster is already running  
-   `$which kubeadm`
+   `which kubeadm`
 2. Remove any pre-installed Docker/K8s packages  
    Unhold the packages  
-   `$sudo apt-mark unhold docker-ce docker-ce-cli kubectl kubeadm kubelet`  
+   `sudo apt-mark unhold docker-ce docker-ce-cli kubectl kubeadm kubelet`  
    Remove the packages  
-   `$sudo apt-get remove -y docker docker.io containerd runc docker-ce docker-ce-cli containerd.io kubeadm kubectl kubelet`  
+   `sudo apt-get remove -y docker docker.io containerd runc docker-ce docker-ce-cli containerd.io kubeadm kubectl kubelet`  
    Remove unused dependencies  
-   `$sudo apt autoremove -y`  
+   `sudo apt autoremove -y`  
    
    > The autoremove option removes packages that were automatically installed because some other package required them but, with those other packages removed, they are no longer needed.
      The packages to be removed are often called "unused dependencies".
 3. Remove Docker and k8s files if exists
    ```sh
-   $cd /var/lib 
-   $sudo rm -r docker  
-   $sudo rm -r kubelet
-   $cd /etc/cni
-   $sudo rm -r net.d
+   cd /var/lib 
+   sudo rm -r docker  
+   sudo rm -r kubelet
+   cd /etc/cni
+   sudo rm -r net.d
    ```
-4. Disable swap memory and reboot vm
+4. Disable swap memory  
+   `Temporarily disable swap memory`
    ```sh
-   swapon -a
+   sudo swapoff -a # Temporarily disable swap memory 
    swapon -s # Check swap usage
    free -m
+   ```
+   ` Permanantly disable swap memory`
+   ```sh
+   # Comment out the swap entry in /etc/fstab
+   sudo vi /etc/fstab
+   #/swap.img      none    swap    sw      0       0
    ```
 5. Enable ip tables - on Ubuntu20
    ```sh
@@ -37,20 +44,20 @@
 ### Installation
 6. Install Docker  
    ```sh
-   $sudo apt-get update
-   $sudo apt-get install -y apt-transport-https ca-certificates curl gnupg-agent software-properties-common
+   sudo apt-get update
+   sudo apt-get install -y apt-transport-https ca-certificates curl gnupg-agent software-properties-common
    ```
    Add Dockers official GPG Key
    ```sh
-   $sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-   $sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
-   $sudo apt-get update
+   sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+   sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+   sudo apt-get update
    ```
    Install Docker  
-   `$sudo apt-get install -y docker-ce docker-ce-cli containerd.io --allow-downgrades`
+   `sudo apt-get install -y docker-ce docker-ce-cli containerd.io --allow-downgrades`
    
    > to Install specific version  
-   > $sudo apt-get install -y docker-ce=<DocerVersion> docker-ce-cli=<DocerVersion> containerd.io --allow-downgrades
+   > sudo apt-get install -y docker-ce=<DocerVersion> docker-ce-cli=<DocerVersion> containerd.io --allow-downgrades
 
 7. Install K8s 
    ```sh
