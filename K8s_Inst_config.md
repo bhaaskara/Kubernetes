@@ -82,7 +82,8 @@
    > sudo apt-get install -y kubeadm=$kubever kubelet=$kubever kubectl=$kubever
    > ```
 ### Initialize the cluster
-8. On master node
+8. On master node  
+   **Initialize the master node**
    ```sh
    sudo kubeadm init --ignore-preflight-errors=all  
    #Copy your join command and keep it safe.
@@ -91,5 +92,14 @@
    ```
    > Find the kubeadm join token later  
    > `kubeadm token create --print-join-command --ttl=0`
+   
+   **set up k8s cluster access**
+   ```sh
+   mkdir -p $HOME/.kube
+   sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+   sudo chown $(id -u):$(id -g) $HOME/.kube/config
+   ```
 9. Install network plugin (ex: Flannel)  
    `kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml`
+10. Join the worker nodes using kubeadm join command
+   > #kubeadm join 10.128.0.16443 --token swi0ci.jq9l75eg8lvpxz9i-discovery-token-ca-cert-hash sha256:2c3cdfa898334b0dfc0f73bbccb998d03f61252ee50f0405c85ba735ff90b5e2
