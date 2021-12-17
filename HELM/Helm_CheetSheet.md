@@ -24,9 +24,12 @@ Create a chart | `helm create mychart`
 Install a chart</br>(from local chart dir ) | `helm install helm-demo-configmap ./mychart`
 Install a chart from repo | `helm install stable/mysql --generate-name`
 Install a chart with name | `helm install myairflow stable/airflow`
+Dru run installing chart | `helm install release1 --debug --dry-run ./chart1`
 Uninstall a chart | `helm uninstall myairflow`
 
 ## Helm Release
 Usage | Command
 ----- | -------
-List charts | `helm ls`
+List releases | `helm ls`
+Dry run a release | `helm install release1 --debug --dry-run ./chart1`
+get the manifest from a release | `helm get manifest release1`
