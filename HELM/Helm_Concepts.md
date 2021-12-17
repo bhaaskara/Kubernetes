@@ -39,3 +39,52 @@ When you `helm install stable/redis` by default helm reaches out to the repo: [H
 `A release is a running instance of a chart, combined with a specific config.`  
 Think of a release as a mechanism to track installed applications on a K8S cluster; when an application is installed by Helm, a release is being created. You can create different installations of a product, e.g., Redis and have two different releases created and tracked in the cluster.
 Releases can be tracked with `helm ls`, each would have a “revision” which is the Helm release versioning terminology; if a specific release is updated, e.g., adding more memory to the Redis release, the revision would be incremented. Helm allows rolling back to a particular revision, making it virtually the manager for deployments and production status handler. 
+
+# Chart templates
+## Variables
+Variables in helm can be defined and used from
+- Built in object
+- values.yaml file
+- through CLI using `--set` keyword
+### Built in objects
+{{ .Release.Name }}
+
+### values.yaml file (File name starts with small v)
+`vi values.yaml`
+```yml
+costCode: 1234
+```
+acccess it using `{{ .Values.costCode }}`  
+> #*note the caps V while access it using Values.costcode*
+
+### Passing variables through CLI
+`helm install release1 ./mychart1 --set costCode=C3245`
+> `--set` will have higher precedence over values.yaml file
+> This will be useful when u want to set variables peticular to that release. 
+
+## Chart functions
+ [Chart Template function](https://masterminds.github.io/sprig/)  
+ [Go templates](https://godoc.org/text/template)
+
+`vi values.yaml`
+```yml
+projectCode: aazzxxyy
+ infra:
+   zone: a,b,c
+   region: us-e
+```
+Access these variables in templates using
+```
+Zone: {{ quote .Values.infra.zone }}
+Region: {{ quote .Values.infra.region }}
+ProjectCode: {{ upper .Values.projectCode }}
+```
+
+### Pipeline
+```
+  var1: {{ .Values.projectCode | upper | quote }}
+  now: {{ now | date "2006-01-02" | quote }}
+```
+
+### Default value
+`contact: {{ .Values.contact | default "1-800-123-0000" | quote }}`
