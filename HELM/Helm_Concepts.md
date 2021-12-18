@@ -153,3 +153,32 @@ LangUsed: |-    # |- defines the variable as list
    - {{ . | title | quote }}
    {{- end }}   
 ```
+### Variables
+Assig a value and access the variable
+```yml
+{{- $relname := .Release.Name -}} # assign
+{{ $relname }} # use/access
+```
+`vi values.yaml`
+```yml
+tags:
+  machine: frontdrive
+  rack: 4c
+  drive: ssd
+  vcard: 8g
+```
+```yml
+tags: 
+  {{- range $key, $value := .Values.tags }}
+  {{ $key }} : {{ $value }}
+  {{- end }} 
+```
+```
+$ always point to root and can be used as
+
+ labels:
+   helm.sh/chart: "{{ $.Chart.Name }}-{{ $.Chart.Version }}"
+   app.kubernetes.io/instance: "{{ $.Release.Name }}"
+   app.kubernetes.io/version: "{{ $.Chart.AppVersion }}"
+  app.kubernetes.io/managed-by: "{{ $.Release.Service }}"
+```
