@@ -49,7 +49,7 @@ Variables in helm can be defined and used from
 ### Built in objects
 {{ .Release.Name }}
 
-### values.yaml file (File name starts with small v)
+### values.yaml file (File name should starts with small v, and extension should be yaml)
 `vi values.yaml`
 ```yml
 costCode: 1234
@@ -69,9 +69,9 @@ acccess it using `{{ .Values.costCode }}`
 `vi values.yaml`
 ```yml
 projectCode: aazzxxyy
- infra:
-   zone: a,b,c
-   region: us-e
+infra:
+  zone: a,b,c
+  region: us-e
 ```
 Access these variables in templates using
 ```
@@ -88,3 +88,68 @@ ProjectCode: {{ upper .Values.projectCode }}
 
 ### Default value
 `contact: {{ .Values.contact | default "1-800-123-0000" | quote }}`
+
+## Flow control
+### If-else
+```yml
+{{ if <condition1> }}
+#true block
+{{ else if <condition> }}
+#else if block
+{{ else }}
+#false block
+{{ end }}
+```
+A condition is evaluated as false if the value is:
+- a Boolean false
+- a numeric zero
+- an empty string
+- a nil (empty or null)
+- an empty collection (map,slice,tuple,dict,array)
+
+
+
+```yml
+  #`indentation is very important`
+  {{- if eq .Values.infra.region "us-e" }}  #`- is to remove the new line`
+  ha: true
+  {{- end }}
+```
+### Defining scope using WITH
+> Built in objects can't be accessed with in the scope
+
+`vi values.yaml`
+```yml
+tags:
+  machine: frontdrive
+  rack: 4c
+  drive: ssd
+  vcard: 8g
+```
+Access in with block
+```yml
+metadata:
+  name: {{ .Release.Name}}-configmap
+  labels:
+  {{- with .Values.tags }} #`- to remove new line`
+    first: {{ .machine }}
+    second: {{ .rack }}
+    third: {{ .drive }}
+  {{- end }}
+```
+### Loop using Range
+`vi values.yaml`
+```yml
+LangUsed:
+  - Python
+  - Ruby
+  - Java
+  - Scala
+```
+Loop through using range
+```yml
+LangUsed: |-    # |- defines the variable as list
+   {{- range .Values.LangUsed }}
+   - {{ . | title | quote }}
+   {{- end }}   
+```
