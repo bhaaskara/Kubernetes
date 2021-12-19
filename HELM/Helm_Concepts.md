@@ -21,7 +21,7 @@ mytestchart/                       # Directory with Chart name
 ├── charts                         # Dir Contains sub charts/Dependencies  
 ├── templates                      # upon which helm install ation (directory of templates that, when combined with values, will generate valid Kubernetes manifest files.)   
 │   ├── NOTES.txt                     
-│   ├── _helpers.tpl  
+│   ├── _helpers.tpl               # contains the templates
 │   ├── deployment.yaml  
 │   ├── hpa.yaml  
 │   ├── ingress.yaml  
@@ -174,11 +174,77 @@ tags:
   {{- end }} 
 ```
 ```
-$ always point to root and can be used as
+$ - here refers to the global context, where as '.' refers to the current context
 
  labels:
    helm.sh/chart: "{{ $.Chart.Name }}-{{ $.Chart.Version }}"
    app.kubernetes.io/instance: "{{ $.Release.Name }}"
    app.kubernetes.io/version: "{{ $.Chart.AppVersion }}"
   app.kubernetes.io/managed-by: "{{ $.Release.Service }}"
+```
+### Include content from same file (define)
+`vi configmap.yaml` under /chart/templates
+```yml
+{{- define "mychart.systemlables" }}
+  labels:
+    drive: ssd
+    machine: frontdrive
+    rack: 4c
+    vcard: 8g
+{{- end }}
+{{- define "var2" }}
+  labels:
+    drive: hdd
+    machine: frontdrive
+    rack: 4c
+    vcard: 8g
+{{- end }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{.Release.Name}}-configmap
+  {{- template "mychart.systemlables" }}
+  {{- template "var2"}}
+data:
+  myvalue: "Sample Config Map"
+  costcode: {{.Values.costCode }}
+  {{- if eq .Values.infra.region "us-e" }}
+  ha: true
+  {{- end }}
+  langused: |-
+          {{- range .Values.LangUsed }}
+          - {{ . | title | quote }}
+          {{- end }}
+```
+### Include content from helper file (_'_helpers.tpl'_)
+> file name can be anything
+
+vi _'_helpers.tpl'_ (under templates)
+```yml
+{{- define "mychart.systemlables" }}
+  labels:
+    drive: ssd
+    machine: frontdrive
+    rack: 4c
+    vcard: 8g
+{{- end }}
+{{- define "var2" }}
+  labels:
+    drive: hdd
+    machine: frontdrive
+    rack: 4c
+    vcard: 8g
+{{- end }}
+```
+vi configmap.yml (under charts)
+```
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{.Release.Name}}-configmap
+  {{- template "mychart.systemlables" }}
+  {{- template "var2"}}
+data:
+  myvalue: "Sample Config Map"
+  costcode: {{.Values.costCode }}
 ```
