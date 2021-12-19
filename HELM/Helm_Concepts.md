@@ -217,6 +217,7 @@ data:
           {{- end }}
 ```
 ### Include content from helper file (_'_helpers.tpl'_)
+#### template
 > file name can be anything
 
 vi _'_helpers.tpl'_ (under templates)
@@ -234,6 +235,9 @@ vi _'_helpers.tpl'_ (under templates)
     machine: frontdrive
     rack: 4c
     vcard: 8g
+    app.kubernetes.io/instance: "{{ $.Release.Name }}"
+    app.kubernetes.io/version: "{{ $.Chart.AppVersion }}"
+    app.kubernetes.io/managed-by: "{{ $.Release.Service }}"
 {{- end }}
 ```
 vi configmap.yml (under charts)
@@ -248,3 +252,51 @@ data:
   myvalue: "Sample Config Map"
   costcode: {{.Values.costCode }}
 ```
+```
+use context: $ (global) . (current)
+with out the context global builtin objects can't be accessed.
+```
+```yml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{.Release.Name}}-configmap
+  {{- template "mychart.systemlables" $ }} #Global context is recommended
+  {{- template "var2" .}}
+data:
+  myvalue: "Sample Config Map"
+  costcode: {{.Values.costCode }}
+```
+#### include
+`vi _helpers.tpl`
+```yml
+{{- define "mychart.version" -}}
+app_name: {{ .Chart.Name }}
+app_version: "{{ .Chart.Version }}"
+{{- end -}}
+```
+`vi configmap.yml`
+```yml
+ metadata:
+   name: {{ .Release.Name}}-configmap
+   labels:
+ {{ include "mychart.version" . | indent 4 }}
+ data:
+   myvalue: "Sample Config Map"
+   costCode: {{ .Values.costCode }}
+   Zone: {{ quote .Values.infra.zone }}
+   Region: {{ quote .Values.infra.region }}
+   ProjectCode: {{ upper .Values.projectCode }}
+   pipeline: {{ .Values.projectCode | upper | quote }}
+   now: {{ now | date "2006-01-02"| quote }}
+   contact: {{ .Values.contact | default "1-800-123-0000" | quote }}
+   {{- range $key, $value := .Values.tags }}
+   {{ $key }}: {{ $value | quote }}
+   {{- end }}
+{{include "mychart.version" $ | indent 2 }}
+```
+> Include vs template  
+> template
+> - the indentation in the source/definition file is used while importing.
+> Include  
+> - allows more control on indentation and is recommended over template.
