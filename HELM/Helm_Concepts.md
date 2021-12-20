@@ -20,8 +20,8 @@ mytestchart/                       # Directory with Chart name
 ├── Chart.yaml                     # A YAML file containing information about the chart  
 ├── charts                         # Dir Contains sub charts/Dependencies  
 ├── templates                      # upon which helm install ation (directory of templates that, when combined with values, will generate valid Kubernetes manifest files.)   
-│   ├── NOTES.txt                     
-│   ├── _helpers.tpl               # contains the templates
+│   ├── NOTES.txt                  # Contents will be displayed upon chart installation     
+│   ├── _helpers.tpl               # contains the templates  
 │   ├── deployment.yaml  
 │   ├── hpa.yaml  
 │   ├── ingress.yaml  
@@ -56,6 +56,16 @@ costCode: 1234
 ```
 acccess it using `{{ .Values.costCode }}`  
 > #*note the caps V while access it using Values.costcode*
+
+#### Global values
+> These values will be available to all the subcharts
+`vi values.yaml`
+```yml
+costCode: 1234
+global:
+   orgdomain: example.com
+```
+acccess it using `{{ .Values.global.orgdomain }}`  
 
 ### Passing variables through CLI
 `helm install release1 ./mychart1 --set costCode=C3245`
@@ -300,3 +310,40 @@ app_version: "{{ .Chart.Version }}"
 > - the indentation in the source/definition file is used while importing.
 > Include  
 > - allows more control on indentation and is recommended over template.
+
+### NOTES.txt
+contents will be displayed at the end of successfull chart installtion.
+Variables and functions will work in NOTES.txt
+`example`
+```
+Thank you for support {{ .Chart.Name }}.
+Your release is named {{ .Release.Name }}.
+To learn more about the release, try:
+
+  $ helm status {{ .Release.Name }}
+  $ helm get all {{ .Release.Name }}
+  $ helm uninstall {{ .Release.Name }}
+```
+### SubCharts
+`Create a sub chart`
+```sh
+#Goto charts folder under parent chart
+cd parentchart/charts
+#Create chart
+helm create subchart # this creates empty folder structure
+```
+## Passing values to subchart from parent chart (overriding values in subchart)
+`vi mychart/values.yaml`
+```yml
+subchart:
+  dbhostname: prodmyqlnode
+```
+### by using Global
+> These values will be available to all the subcharts
+`vi values.yaml`
+```yml
+costCode: 1234
+global:
+   orgdomain: example.com
+```
+acccess it using `{{ .Values.global.orgdomain }}` in sub charts.
