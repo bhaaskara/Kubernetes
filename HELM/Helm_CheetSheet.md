@@ -33,3 +33,5 @@ Usage | Command
 List releases | `helm ls`
 Dry run a release | `helm install release1 --debug --dry-run ./chart1`
 get the manifest from a release | `helm get manifest release1`
+Release status | `helm status <releasename>`
+List all resources of a releases | `helm get all <release name>`
