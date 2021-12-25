@@ -347,3 +347,111 @@ global:
    orgdomain: example.com
 ```
 acccess it using `{{ .Values.global.orgdomain }}` in sub charts.
+
+# Helm repository management
+
+## Chart Repositories 
+- An HTTP server hosting index.yaml file along with chart packages 
+- When charts are ready, can be uploaded to the server and shared 
+- Multiple charts with dependency and version can be managed 
+- Will be managed like source control system in a common location 
+- Can be hosed as part Of 
+ - Google Compute Cloud Bucket 
+ - AWS S3 Bucket 
+ - Github pages 
+ - Own webserver (chartmuseum) 
+ 
+## Helm Chart repository workflow
+![image](https://github.com/bhaaskara/Kubernetes/blob/4adc59a2009132fa7501e5dcd23aca9eb2c010d0/HELM/Helm_Img/Helm_Repo_Workflow.png)
+
+## Chartmuseum repository
+`Chartmuseum is your own webserver hosting the charts`
+
+### Install chartmuseum
+```sh
+curl -LO https://s3.amazonaws.com/chartmuseum/release/latest/bin/linux/amd64/chartmuseum
+chmod +x ./chartmuseum
+mv ./chartmuseum /usr/local/bin
+chartmuseum --version
+```
+**Run chart museum**
+`chartmuseum --debug --port=8080 --storage="local" --storage-local-rootdir="./chartstorage"`  
+
+**Add chartmuseum repo to the local repo list**
+```sh
+helm repo add chartmuseum http://localhost:8080
+helm repo list
+helm search repo chartmuseum
+```
+### Add/Push a chart to chartmuseum
+1. Create chart
+	`helm create <chartname>`
+	> This creates empty chart directory structure, add or modify the files as you need.
+2. Package the chart
+	`helm package <chartname>`  
+3. Add/Push the chart to chartmuseum
+	`curl --data-binary "@<chartname>-0.1.0.tgz" http://192.168.0.52:8080/api/charts`  
+4. Update and list the chartmuseum repo
+	```sh
+	helm repo update
+	helm repo list
+	```
+### Maintain chart version
+1. Update the chart `Version` and `appVersion` fields in chart.yml
+2. Package the chart
+	`helm package <chartname>`  
+3. Add/Push the chart to chartmuseum
+	`curl --data-binary "@<chartname>-0.1.1.tgz" http://192.168.0.52:8080/api/charts`  
+4. Update and list the chartmuseum repo
+	```sh
+	helm repo update
+	helm repo list -l <reponame> #will list all the available versions
+	```
+### Install Helm push plugin
+```
+helm plugin install https://github.com/chartmuseum/helm-push.git
+helm plugin list
+```
+**Push the chat to repo**  
+```
+helm create helmpushdemo #Create a chart
+helm push helmpushdemo/ mychartmuseumrepo #you can push by using the dir, instead of packaging and copying
+```
+**List the repo**  
+```
+helm repo update
+helm search repo mychartmuseumrepo
+```
+
+## Maintain github as chartrepository
+1. Create new repo in github
+2. Create a token to upload charts
+   `Github -> <repo> -> settings -> Developer settings -> Personal access tokens -> Generate new token`  
+   > Select all the scopes except admin scopes
+   > copy and save the token, it wont be visible later
+3. Intialize local repo and push it to github created repo, ex:helm_git_repo
+	```sh
+	mkdir helm_git_repo
+	cd helm_git_repo
+	echo "# helm_repo" >> README.md
+	git init
+	git add README.md
+	git commit -m "first commit"
+	git config --global user.email "muthu4all@gmail.com"
+	git config --global user.name "Muthukumar"
+	git commit -m "first commit"
+	git remote add origin https://github.com/<<useraccount>>/helm_git_repo.git
+	git push -u origin master
+	```
+4. Create chart and push it to repo
+	```sh
+	helm create gitrepotest # This no need to be in git repo dir
+	cd helm_git_repo # Get into gitrepo dir to package
+	helm package /root/helm_demo/gitrepotest # Provide path to chart dir
+	helm repo index .  # Create an index file, in case of chartmuseum its automatically created by chartmuseum
+	git add .
+	git commit -m "my-repo"
+	git push -u origin master
+	```
+5. Add git chart repo to local repos
+	`helm repo add --username <git userid> --password <<acccess token>> my-github-helm-repo 'https://raw.githubusercontent.com/<user>/helm_git_repo/master'
