@@ -30,7 +30,7 @@ Install a chart with name | `helm install myairflow stable/airflow`
 Dry run installing chart | `helm install release1 --debug --dry-run ./chart1`
 Uninstall a chart | `helm uninstall myairflow`
 
-## Helm Release
+## Helm Release/Deployment
 Usage | Command
 ----- | -------
 List releases | `helm ls`
