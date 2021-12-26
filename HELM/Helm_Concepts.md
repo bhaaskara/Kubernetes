@@ -1,3 +1,11 @@
+**Helm synopsys**
+```
+Helm is package manager for Kubernetes.
+Helm deployes all the reources defined in yaml files under ./<charname>/templates to k8s cluster.
+Helm should be installed and configured on a machine with k8s access through kubectl.
+and while deploying it uses the values defined in values.yaml (./<charname>/values.yaml)
+and dependencies be mentioned/defined in chart.yaml (./<charname>/chart.yaml)
+```
 ## What is Helm
 **A helmsman or “helm” is a person who steers a ship, sailboat, submarine, other types of maritime vessel, or spacecraft.** — Wikipedia  
 **The package manager for Kubernetes; Helm is the best way to find, share, and use software built for Kubernetes.** — Helm.sh
@@ -455,3 +463,218 @@ helm search repo mychartmuseumrepo
 	```
 5. Add git chart repo to local repos
 	`helm repo add --username <git userid> --password <<acccess token>> my-github-helm-repo 'https://raw.githubusercontent.com/<user>/helm_git_repo/master'
+
+# Helm Chart management
+## Upgrade a chart
+## Roll back a chart
+## Helm Dependency
+> Definee the dependent charts in chart.yaml
+
+1. Define the dependency in chart.yaml (./<chatname>/chart.yaml)
+```yml
+dependencies:
+  - name: mariadb
+    version: 7.x.x
+    repository: https://kubernetes-charts.storage.googleapis.com/
+```
+2. Build the depedent chat
+`helm dependency build ./dependencytest`
+
+3. Deploy the chart
+
+4. Update/Modify the dependencies
+`helm dependency update ./dependencytest`
+
+## Helm Chart hooks
+Preinstall hooks run after templates are rendered and before any resources are created in K8s. 
+Post-install hooks run after all resources are loaded into K8s. 
+Pre-delete hooks run before any resources are deleted from K8s. 
+Post-delete hooks run after all the release's resources are deleted. 
+Pre-upgrade hooks run after templates are rendered and before any resources are loaded into K8s. 
+Post-upgrade hooks run after all resources are upgraded. 
+Pre-rollback hooks run after templates are rendered and before any resources are rolled back. 
+Post-rollback hooks run after all resources are modified. 
+
+### Create chart hooks
+1. Create the yaml file under templates. (./<chartname>/templates)
+   with annotations
+   `preinstall-hook.yaml`
+   ```yml
+   apiVersion: v1
+   kind: Pod
+   metadata:
+     name: preinstall-hook
+     annotations:
+       "helm.sh/hook": "pre-install"
+   spec:
+     containers:
+     - name: hook1-container
+       image: busybox
+       imagePullPolicy: IfNotPresent
+       command: ['sh', '-c', 'echo The pre-install hook Pod is running  - preinstall-hook && sleep 10']
+     restartPolicy: Never
+     terminationGracePeriodSeconds: 0
+   ```
+   `postinstall-hook.yaml`
+   ```yml
+   apiVersion: v1
+   kind: Pod
+   metadata:
+     name: postinstall-hook
+     annotations:
+       "helm.sh/hook": "post-install"
+   spec:
+     containers:
+     - name: hook2-container
+       image: busybox
+       imagePullPolicy: IfNotPresent
+       command: ['sh', '-c', 'echo post-install hook Pod is running - post-install&& sleep 5']
+     restartPolicy: Never
+     terminationGracePeriodSeconds: 0  
+   ```
+2. These hooks will get triggered based on the hooks annotation, in this case before and after installing the chart.   
+
+> The pods/jobs created by hooks needs to be deleted/cleaned manually, i.e these wont be deleted on chart uninstall.
+> kubectl delete pod/preinstall-hook 
+> kubectl delete pod/postinstall-hook
+
+### Create Job as hook
+`preinstalljob-hook-job.yaml`
+```yml
+apiVersion: batch/v1
+kind: Job
+metadata:   
+  name: preinstalljob-hook-job   
+  annotations:   
+    "helm.sh/hook": "pre-install"   
+   
+spec:
+  template:
+    spec:      
+      containers:
+      - name: pre-installit 
+        image: busybox	
+        imagePullPolicy: IfNotPresent
+        command: ['sh', '-c', 'echo pre-install Job Pod is Running ; sleep 3']
+      restartPolicy: OnFailure	
+      terminationGracePeriodSeconds: 0
+      
+  backoffLimit: 3
+  completions: 1
+  parallelism: 1
+```
+`postinstalljob-hook-job.yaml`
+```yml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: postinstalljob-hook-job
+  annotations:
+    "helm.sh/hook": "post-install"
+spec:
+  template:
+    spec:      
+      containers:
+      - name: post-install
+        image: busybox
+        imagePullPolicy: IfNotPresent
+        
+        command: ['sh', '-c', 'echo post-install Pod is Running ; sleep 6']
+    
+      restartPolicy: OnFailure
+      terminationGracePeriodSeconds: 0
+      
+  backoffLimit: 3
+  completions: 1
+  parallelism: 1  
+```
+> The pods/jobs created by hooks needs to be deleted/cleaned manually, i.e these wont be deleted on chart uninstall.
+> kubectl delete job/preinstalljob-hook-job
+> kubectl delete job/postinstalljob-hook-job
+
+### Hook execution with weight
+```
+Define the weight using annotation
+Hook with less weight will trigger first
+```
+`preinstalljob-hook-1.yaml`
+```yml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: preinstalljob-hook-1
+  annotations:
+    "helm.sh/hook": "pre-install"
+    "helm.sh/hook-weight": "-2"
+
+spec:
+  template:
+    spec:      
+      containers:
+      - name: pre-install
+        image: busybox
+        imagePullPolicy: IfNotPresent
+        
+        command: ['sh', '-c', 'echo pre-install Job Pod is Running Weight -2 and Sleep 2 ; sleep 2']
+    
+      restartPolicy: OnFailure
+      terminationGracePeriodSeconds: 0
+      
+  backoffLimit: 3
+  completions: 1
+  parallelism: 1
+```
+`preinstalljob-hook-2.yaml`
+```yml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: preinstalljob-hook-2
+  annotations:
+    "helm.sh/hook": "pre-install"
+    "helm.sh/hook-weight": "3"
+
+spec:
+  template:
+    spec:      
+      containers:
+      - name: pre-install
+        image: busybox
+        imagePullPolicy: IfNotPresent
+        
+        command: ['sh', '-c', 'echo pre-install Job Pod is Running Weight 3 and Sleep 3 ; sleep 3']
+    
+      restartPolicy: OnFailure
+      terminationGracePeriodSeconds: 0
+      
+  backoffLimit: 3
+  completions: 1
+  parallelism: 1
+```
+`preinstalljob-hook-3.yaml`
+```yml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: preinstalljob-hook-3
+  annotations:
+    "helm.sh/hook": "pre-install"
+    "helm.sh/hook-weight": "5"
+
+spec:
+  template:
+    spec:      
+      containers:
+      - name: pre-install
+        image: busybox
+        imagePullPolicy: IfNotPresent
+        
+        command: ['sh', '-c', 'echo pre-install Job Pod is Running Weight 5 and Sleep 5; sleep 5']
+    
+      restartPolicy: OnFailure
+      terminationGracePeriodSeconds: 0
+      
+  backoffLimit: 3
+  completions: 1
+  parallelism: 1
+```
