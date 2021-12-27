@@ -678,3 +678,23 @@ spec:
   completions: 1
   parallelism: 1
 ```
+# Testing and verification
+## Syntax check
+Validate the chart syntax
+`helm lint <chart dir>`
+
+## Hook test
+```
+Create a test.yaml file under ./<chartname>/templates/test
+and annotation should be "hook"
+this yaml file will be invoked or deployed when you do
+`helm test <release/deployment>`
+```
+
+## get and status
+`helm get notes <release/deployment>` # Get the release/deployment notes after its deployment  
+`helm get values <release/deployment>` # List the user specified values for the release/deployment  
+`helm get manifest <release/deployment>` # SHows the manifest file rendered with values (very useful to debug)  
+`helm get hooks <release/deployment>` # Get the defined hooks for a release or deployment'  
+`helm get all <release/deployment>` # Lists Manifests, Notes and hooks for a release/deployment  
+`helm status <release/deployment>` # SHows the name space the resources are deployed their status and the notes  
