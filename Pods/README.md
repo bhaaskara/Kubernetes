@@ -90,6 +90,39 @@ A Pod can specify a set of shared storage volumes. All containers in the Pod can
 Each Pod is assigned a unique IP address for each address family. Every container in a Pod shares the network namespace, including the IP address and network ports. Inside a Pod the containers that belong to the Pod can communicate with one another using localhost.
 The containers in a Pod can also communicate with each other using standard inter-process communications like SystemV semaphores or POSIX shared memory.
 
+## Pod lifecycle
+Pods follow a defined lifecycle, 
+starting in the Pending phase, moving through Running if at least one of its primary containers starts OK, and then through either the Succeeded or Failed phases depending on whether any container in the Pod terminated in failure.
+
+> Pods are only scheduled once in their lifetime. Once a Pod is scheduled (assigned) to a Node, the Pod runs on that Node until it stops or is terminated.
+
+## Pod lifetime
+Like individual application containers, Pods are considered to be relatively ephemeral (rather than durable) entities. Pods are created, assigned a unique ID (UID), and scheduled to nodes where they remain until termination (according to restart policy) or deletion. If a Node dies, the Pods scheduled to that node are scheduled for deletion after a timeout period.
+
+Pods do not, by themselves, self-heal. If a Pod is scheduled to a node that then fails, the Pod is deleted; likewise, a Pod won't survive an eviction due to a lack of resources or Node maintenance. Kubernetes uses a higher-level abstraction, called a controller, that handles the work of managing the relatively disposable Pod instances.
+
+A given Pod (as defined by a UID) is never "rescheduled" to a different node; instead, that Pod can be replaced by a new, near-identical Pod, with even the same name if desired, but with a different UID.
+
+## Pod Phase
+Value | Description
+----- | ------------
+Pending	| The Pod has been accepted by the Kubernetes cluster, but one or more of the containers has not been set up and made ready to run. This includes time a Pod spends waiting to be scheduled as well as the time spent downloading container images over the network.
+Running	| The Pod has been bound to a node, and all of the containers have been created. At least one container is still running, or is in the process of starting or restarting.
+Succeeded |	All containers in the Pod have terminated in success, and will not be restarted.
+Failed	| All containers in the Pod have terminated, and at least one container has terminated in failure. That is, the container either exited with non-zero status or was terminated by the system.
+Unknown	| For some reason the state of the Pod could not be obtained. This phase typically occurs due to an error in communicating with the node where the Pod should be running.
+
+> When a Pod is being deleted, it is shown as Terminating by some kubectl commands. This Terminating status is not one of the Pod phases. A Pod is granted a term to terminate gracefully, which defaults to 30 seconds. You can use the flag --force to terminate a Pod by force.
+
+## Pod conditions
+Condition | Description
+-------- | ------------
+PodScheduled | the Pod has been scheduled to a node.
+ContainersReady | all containers in the Pod are ready.
+Initialized | all init containers have completed successfully.
+Ready | the Pod is able to serve requests and should be added to the load balancing pools of all matching Services.
+
+
 ## Static Pod
 Static Pods are managed directly by the kubelet daemon on a specific node, without the API server observing them. Unlike Pods that are managed by the control plane (for example, a Deployment). instead, the kubelet watches each static Pod (and restarts it if it fails).
 Static Pods are always bound to one Kubelet on a specific node.
