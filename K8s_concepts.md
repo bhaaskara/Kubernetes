@@ -118,21 +118,3 @@ kube-proxy uses the operating system packet filtering layer if there is one and 
 #### Container runtime
 The container runtime is the software that is responsible for running containers.
 Kubernetes supports several container runtimes: Docker, containerd, CRI-O, and any implementation of the Kubernetes CRI (Container Runtime Interface).
-
-# Multi container Pods
-## Init containers
-A Pod can have multiple containers running apps within it, but it can also have one or more init containers, which are run before the app containers are started.
-Init containers are exactly like regular containers, except:
- - Init containers always run to completion.
- - Each init container must complete successfully before the next one starts.
-
-If a Pod's init container fails, the kubelet repeatedly restarts that init container until it succeeds. However, if the Pod has a restartPolicy of Never, and an init container fails during startup of that Pod, Kubernetes treats the overall Pod as failed.
-
-**Differences from regular containers**  
- - Init containers support all the fields and features of app containers, including resource limits, volumes, and security settings.
- - Init containers do not support lifecycle, livenessProbe, readinessProbe, or startupProbe because they must run to completion before the Pod can be ready.
-
-If you specify multiple init containers for a Pod, kubelet runs each init container sequentially. Each init container must succeed before the next can run. When all of the init containers have run to completion, kubelet initializes the application containers for the Pod and runs them as usual.
-
-The name of each app and init container in a Pod must be unique; a validation error is thrown for any container sharing a name with another.  
-If the Pod restarts, or is restarted, all init containers must execute again.
