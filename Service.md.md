@@ -27,7 +27,7 @@ spec:                #no type specified here
      targetport: 3000
 ```
 
-![[Pastedimage20220107151525.png]](/images/Pastedimage20220107151525.png)
+![[Pastedimage20220107151525.png]](/Images/Pastedimage20220107151525.png)
 - pods are identified by the selectors, i.e pod labels  
    `all the labels should match, not just one of them`
    
