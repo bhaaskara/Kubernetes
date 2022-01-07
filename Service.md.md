@@ -24,11 +24,11 @@ spec:                #no type specified here
   ports:
    - protocol: tcp
      port: 3200
-	 targetport: 3000
+     targetport: 3000
 ```
 
-![[Pasted image 20220107151525.png]](/images/Pasted image 20220107151525.png)
-- pods are identified by the selectors, i.e pod labels
+![[Pastedimage20220107151525.png]](/images/Pastedimage20220107151525.png)
+- pods are identified by the selectors, i.e pod labels  
    `all the labels should match, not just one of them`
    
 Service node port Range - 30000-32768
