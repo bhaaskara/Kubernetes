@@ -12,6 +12,7 @@
 Usage | Command
 :---- | :------
 Pods Ip address | `kubectl get pods -o wide`
+
 ## Deployments
 Usage | Command
 :---- | :------
@@ -32,3 +33,8 @@ Rollback to specific revision | `kubectl rollout undo deployment/<nginx-deployme
 Usage | Command
 :---- | :------
 List | `kubectl get rs`
+
+## Service
+Usage | Command
+:---- | :------
+List the backend pods | `kubectl get backends`
