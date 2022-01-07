@@ -8,6 +8,10 @@
 | /var/log/containers | k8s container logs |
 
 # K8s Commands
+## Pods
+Usage | Command
+:---- | :------
+Pods Ip address | `kubectl get pods -o wide`
 ## Deployments
 Usage | Command
 :---- | :------
