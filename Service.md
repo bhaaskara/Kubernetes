@@ -31,7 +31,7 @@ spec:                #no type specified here
 - pods are identified by the selectors, i.e pod labels  
 - all the selectors should match with the pod labels, not just one of them
 
-## service end points
+## Service end points
 K8s creates a end point object same name as service, to track of which pods are the members/end points of the service.
 The end point object is dynamic and gets updated when pods get destroyed/created.
 
@@ -39,12 +39,44 @@ List the end points with below command.
 `kubectl get endpoints`
 
 Service node port Range - 30000-32768
-> By default, the range of the service NodePorts is **30000-32768**.   
+> By default, the range of the service NodePorts is **30000-32767.   
     This range contains 2768 ports, which means that you can create up to 2768 services with  
     NodePorts.
 
 ## Multi port service
 ![[multi_port_service.png]](/Images/multi_port_service.png)
+```yml
+apiVersion: v1
+kind: service
+metadata:
+    name: mongodb-service
+spec:
+    selector:
+        app: mongodb
+    ports:
+        - name: mongodb-server   #Mandatory in multiport config
+          protocol: TCP
+          port: 27017
+          targetport: 27017
+        - name: mongodb-exporter
+          protocol: TCP
+          port: 9216
+          targetport: 9216 
+```
+
+- `-name` field is optional in single port service and mandatory in multi port service.
+
+## Headless service
+
+
+
+
+## QA
+how to find the individual pods IPs through NS lookup of service
+how the load balancer works, as it uses target port and node port and cluster IP.
+how to configure ingress
+how to configure load balancer(i.e cloud)
+
 # References
 https://www.youtube.com/watch?v=T4Z7visMM4E&list=PLVjlqAPNDEDZ9_8md_qi-ZHaQIj9mVCVw&index=3
 
