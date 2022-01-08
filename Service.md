@@ -44,9 +44,7 @@ Service node port Range - 30000-32768
     NodePorts.
 
 ## Multi port service
-![](multi_port_service.png)
-
-test it
+![[multi_port_service.png]](/Images/multi_port_service.png)
 # References
 https://www.youtube.com/watch?v=T4Z7visMM4E&list=PLVjlqAPNDEDZ9_8md_qi-ZHaQIj9mVCVw&index=3
 
