@@ -12,6 +12,24 @@
 Usage | Command
 :---- | :------
 Pods Ip address | `kubectl get pods -o wide`
+Pod logs | `kubectl logs dapi-test-pod`
+
+### Pod labels
+Usage | Command
+:---- | :------
+List all labels | `kubectl get pods --show-labels`
+List pods with label | `kubectl get pods -Lapp -Ltier -Lrole`
+|                                            | `kubectl get pods --selector="app=redis,role=slave" --show-labels`
+|                      | `kubectl get pods --selector="role in (master,slave)" --show-labels`
+|List pods with lable app    | `kubectl get pods --selector="app" --show-labels`
+
+## Configmaps
+Usage | Command
+:---- | :------
+List Configmaps | `kubectl get configmaps`
+Describe Configmap | `kubectl describe configmaps my-config`
+
+Get configmap yaml | `kubectl get configmaps my-config -o yaml`
 
 ## Deployments
 Usage | Command

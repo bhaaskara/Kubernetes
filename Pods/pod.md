@@ -197,13 +197,12 @@ In case you don't want for each container to have all environment variables from
 	  containers:
 	  - env:
 		- name: VARIABLE1
-		  valueFrom:
-			configMapKeyRef:
-			  name: my-env
-			  key: VARIABLE1
+               valueFrom:
+			   configMapKeyRef:
+			      name: my-env
+			      key: VARIABLE1
 
 ### Pod and Container Fields
-
 Also, you can get pod and container fields that are available through Kubernetes API and set them as environment variables. Here is the list of available pod and container fields - replace <CONTAINER_NAME> with your container name to get container fields:
 
 	spec:
