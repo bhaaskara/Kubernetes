@@ -209,3 +209,7 @@ You can scale it up/down, roll back to a previous revision, or even pause it if 
 You can set `.spec.revisionHistoryLimit` field in a Deployment to specify how many old ReplicaSets for this Deployment you want to retain. The rest will be garbage-collected in the background. By default, it is 10.
 
 > **Note:** Explicitly setting this field to 0, will result in cleaning up all the history of your Deployment thus that Deployment will not be able to roll back.
+
+## Deployment strategy
+### Canary deployment
+https://phoenixnap.com/kb/kubernetes-canary-deployments
