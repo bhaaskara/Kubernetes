@@ -121,3 +121,81 @@ The container runtime is the software that is responsible for running containers
 Kubernetes supports several container runtimes: Docker, containerd, CRI-O, and any implementation of the Kubernetes CRI (Container Runtime Interface).
 
 </details>
+
+
+# Kubernetes Networking
+## Service
+## Ingress
+**What is Ingress ?**
+An API object that manages external access to the services in a cluster, typically HTTP.
+Ingress may provide load balancing, SSL termination and name-based virtual hosting.
+[Ingress](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.23/#ingress-v1-networking-k8s-io) exposes HTTP and HTTPS routes from outside the cluster to [services](https://kubernetes.io/docs/concepts/services-networking/service/) within the cluster. Traffic routing is controlled by rules defined on the Ingress resource.
+
+![[ingress.jpg]](/Images/ingress.jpg)
+
+An Ingress may be configured to give Services externally-reachable URLs, load balance traffic, terminate SSL / TLS, and offer name-based virtual hosting. An [Ingress controller](https://kubernetes.io/docs/concepts/services-networking/ingress-controllers) is responsible for fulfilling the Ingress, usually with a load balancer, though it may also configure your edge router or additional frontends to help handle the traffic.
+
+An Ingress does not expose arbitrary ports or protocols. Exposing services other than HTTP and HTTPS to the internet typically uses a service of type [Service.Type=NodePort](https://kubernetes.io/docs/concepts/services-networking/service/#type-nodeport) or [Service.Type=LoadBalancer](https://kubernetes.io/docs/concepts/services-networking/service/#loadbalancer).
+
+### Prerequisites
+You must have an [Ingress controller](https://kubernetes.io/docs/concepts/services-networking/ingress-controllers) to satisfy an Ingress. Only creating an Ingress resource has no effect.
+You may need to deploy an Ingress controller such as [ingress-nginx](https://kubernetes.github.io/ingress-nginx/deploy/). You can choose from a number of [Ingress controllers](https://kubernetes.io/docs/concepts/services-networking/ingress-controllers).
+
+```
+what is ingress
+ingress yaml configuration
+when do you need ingress
+```
+
+### Ingress Controllers
+
+In order for the Ingress resource to work, the cluster must have an ingress controller running.
+
+Unlike other types of controllers which run as part of the `kube-controller-manager` binary, Ingress controllers are not started automatically with a cluster.
+
+Kubernetes as a project supports and maintains [AWS](https://github.com/kubernetes-sigs/aws-load-balancer-controller#readme), [GCE](https://git.k8s.io/ingress-gce/README.md#readme), and [nginx](https://git.k8s.io/ingress-nginx/README.md#readme) ingress controllers.
+
+[AKS Application Gateway Ingress Controller](https://azure.github.io/application-gateway-kubernetes-ingress/) is an ingress controller that configures the [Azure Application Gateway](https://docs.microsoft.com/azure/application-gateway/overview).
+
+ Setup ingress on minikube with ngnix ingress controller.
+ https://kubernetes.io/docs/tasks/access-application-cluster/ingress-minikube/
+
+ > What is ingress class
+ > when multiple ingress controllers are deployed by using ingress class we can tie the ingress to ingress controller.
+
+### Ingress configuration
+- Install ingress controller in minikube
+- Create Ingress resource
+- Create service
+- Create Pods
+
+**Install ingress controller in minikube**
+`minikube addons enable ingress`
+`kubectl get pods -n kube-system`
+automatically starts the k8s nginx implementation of Ingress controller.
+
+**Create Ingress rule/resource**
+ ```yaml
+ apiVersion: networking.k8s.io/v1beta1
+ kind: Ingress
+ metadata:
+   name: dashboard
+   namespace: k8s-dashboard
+ spec:
+   rules:
+   - host: dashboard.com
+     http:
+       paths:
+       - backend:
+         serviceName: dashboard #Here Service is name same as Ingress and is cluster type.
+         servicePort: 80
+
+ ```
+ `kubectl apply -f ingress.yml`
+
+ check the ADDRESS assigned to the ingress, if not wait for some time
+ `kubectl get ingress`  
+
+ > To resolve the dashboard.com to the IP 
+ > add entry in the /etc/hosts
+ > 192.168.0.5  dashboard.com
