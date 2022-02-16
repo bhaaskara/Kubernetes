@@ -20,7 +20,7 @@ Total Containers | 300000
 Pods per node | 100
 
 # K8s Architecture
-K8s follows master and worker node architecture, master node manages the worker nodes and the Pods in the cluster.
+K8s follows master and worker node architecture, master node manages the worker nodes and the workloads (Pods) in the cluster.
 Master node (also referred as control plane) make global decisions about the cluster (for example, scheduling), as well as detecting and responding to cluster events, while worker nodes host the Pods that are the components of the application workload.
 
 ![image](https://user-images.githubusercontent.com/41310048/137490691-8e19d883-b057-4b2e-94da-acd8a3e60dfe.png)
