@@ -199,3 +199,13 @@ automatically starts the k8s nginx implementation of Ingress controller.
  > To resolve the dashboard.com to the IP 
  > add entry in the /etc/hosts
  > 192.168.0.5  dashboard.com
+
+ # K8s monitoring using prometheus
+
+ Prometheus provides monitoring and alerting through email or slack.
+ Graphana is for visualization.
+
+ ELK is for logging
+
+ Kibana and tabview is alternatives for graphana.
+ 

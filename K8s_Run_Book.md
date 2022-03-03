@@ -47,3 +47,33 @@ spec:
 
 >you can also use `docker ps` on a node to check the pod.  
 >Remove the yml file to delete static pod.
+
+# K8s nodes upgrade
+- check the release notes of new version
+- Upgrading from 1.16 to 1.18
+- Check for API version compatibility 
+
+## Upgrade path
+- upgrade the master first (1.16 -> 1.17 -> 1.18) it would take an hour
+    - on cloud provider console just initiate the master upgrade.
+- Upgrade the nodes (1.16 -> 1.18)
+    - Verify the existing nodes
+    - `kubectl get nodes`
+    - Drain the node
+    - `kubectl drain <node name> --ignore-daemonsets --delete-local-data `
+    - __Drain a node will cordon the node aswell__
+    -                                                                          
+
+# K8s Issues and trouble shooting
+## Pod trouble shooting
+```
+kubectl logs <pod>
+kubectl events
+kubectl exec -it
+kubectl describe <pod>
+```
+
+## Memory issue
+check for the resource usage in k8s dashboard or `kubectl events`
+if you want to increase the memory then edit the resources under deployment and apply.
+
