@@ -19,6 +19,47 @@ Total Pods | 150000
 Total Containers | 300000
 Pods per node | 100
 
+# Kubernetes best practices
+## Name spaces
+- multiple virtual cluster boundary with in one physical cluster.
+- provides scope for naming
+- devide cluster resources to namespaces
+- useful for namespace specific access
+## Resource requests and limits
+- set appropriate requests and limits for your container
+- set resource limits for namespaces using ResourceQuotas
+- When CPU reaches limit, its throttles
+- When memory reaches limit, POD will be evicted
+- Proper requests and limits save cost as well
+## How do you cost/performace optimize your k8s app ?
+Detect CPU/Memory waste - Utiliza metrics server.
+ex:  - Cloudwatch container insights (AWS)
+       - kubecost
+       - cloudhealth
+       - kubernetes resource report
+## Use readyness and liveness probes
+## Secure k8s
+- k8s security
+  - Application security
+    - Pod, Namespace, Node
+    - RBAC, IRSA
+  - DevsecOps - DevOps + Security = security of the container devops lifecycle
+    - Authorization
+    - Scan repository
+    - Scan running container
+  - Security compliance 
+    - FedRAMP, HIPAA, SOC etc..
+## Day 2 ops
+  - Detective controls
+    - collect and analyze audit logs
+    - Alarm on certain behavior
+- Understand k8s termination lifecycle
+  - Use rolling update
+  - App handle graceful termination
+- Incident response
+  - Identify and isolate
+  - run load and penetration testing
+  
 # K8s Architecture
 K8s follows master and worker node architecture, master node manages the worker nodes and the workloads (Pods) in the cluster.
 Master node (also referred as control plane) make global decisions about the cluster (for example, scheduling), as well as detecting and responding to cluster events, while worker nodes host the Pods that are the components of the application workload.

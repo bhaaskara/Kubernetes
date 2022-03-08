@@ -56,7 +56,6 @@ Each controller for a workload resource uses the PodTemplate inside the workload
 If you change the pod template for a workload resource, that resource needs to create replacement Pods that use the updated template.
 For example, the StatefulSet controller ensures that the running Pods match the current pod template for each StatefulSet object. If you edit the StatefulSet to change its pod template, the StatefulSet starts to create new Pods based on the updated template. Eventually, all of the old Pods are replaced with new Pods, and the update is complete.
 
-
 ## Pod update and replacement
 when the Pod template for a workload resource is changed, the controller creates new Pods based on the updated template instead of updating or patching the existing Pods
 
@@ -260,3 +259,22 @@ Also, you can get pod and container fields that are available through Kubernetes
 			  resource: limits.memory
 			  
 > As we can see, there are a lot of options available in Kubernetes when defining environment variables. You need to pick the right approach. If you want to manage sensitive information like passwords and other secrets, then you should use Secret instead of ConfigMap.
+
+---
+**To be covered**
+
+- Pod example yaml
+- is meta data field mandatory
+- how to check the syntax of an yaml/k8s yaml
+- POd with init containers
+- Pod with multiple init containers
+- Pod with multiple containers
+- Pod with side car container
+- pod with multiple side car containers
+- pod with config maps and secrets
+- pod with node selector
+- pod with node affinity and tolarance
+- pod with resource limits
+- pod with volumes
+- pod with static ip
+- 

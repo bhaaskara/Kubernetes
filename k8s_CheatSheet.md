@@ -8,11 +8,23 @@
 | /var/log/containers | k8s container logs |
 
 # K8s Commands
+
+# General
+Usage | Command
+:---- | :------
+Get the status | `kubectl get -f <file.yml>`
+More details | `kubectl describe -f <myapp.yml>`
+Pod logs  | `kubectl get logs <pod_name>`
+Events | `kubectl get events`
+
 ## Pods
 Usage | Command
 :---- | :------
 Pods Ip address | `kubectl get pods -o wide`
 Pod logs | `kubectl logs dapi-test-pod`
+container logs | `kubectl logs <pod_name> -c <container_name>`
+Init container logs | `kubectl logs <pod_name> -c <init_container_name>`
+
 
 ### Pod labels
 Usage | Command
@@ -36,16 +48,18 @@ Usage | Command
 :---- | :------
 Create deployment | `kubectl create deployment <deploy_name> --image=<image>`
 List | `kubectl get deployments`
-Deatils | `kubectl describe deployments`
+Details | `kubectl describe deployments`
 Update | `kubectl set image deployment/<deploymentname> nginx=<new version> `
 |      | `kubectl edit deplaoyment/<deployment_name>`
 Disruptive update | `kubectl replace -f https://k8s.io/examples/application/nginx/nginx-deployment.yaml --force`
 Rollout status | `kubectl rollout status deployment/<nginx-deployment>`
 |              | `kubectl get rs`
 Rollout history/Revision | `kubectl rollout history deployment/<nginx-deployment>`
+Revision details | `kubectl rollout history deployment/<my-app> --revision=2`
 Pause a rollout | `kubectl rollout pause deployment/<nginx-deployment>`
 Rollback | `kubectl rollout undo deployment/<nginx-deployment>`
 Rollback to specific revision | `kubectl rollout undo deployment/<nginx-deployment> --to-revision=2`
+events | `kubectl describe <deployment_name>`
 
 ## Replica sets
 Usage | Command
