@@ -259,22 +259,3 @@ Also, you can get pod and container fields that are available through Kubernetes
 			  resource: limits.memory
 			  
 > As we can see, there are a lot of options available in Kubernetes when defining environment variables. You need to pick the right approach. If you want to manage sensitive information like passwords and other secrets, then you should use Secret instead of ConfigMap.
-
----
-**To be covered**
-
-- Pod example yaml
-- is meta data field mandatory
-- how to check the syntax of an yaml/k8s yaml
-- POd with init containers
-- Pod with multiple init containers
-- Pod with multiple containers
-- Pod with side car container
-- pod with multiple side car containers
-- pod with config maps and secrets
-- pod with node selector
-- pod with node affinity and tolarance
-- pod with resource limits
-- pod with volumes
-- pod with static ip
-- 
