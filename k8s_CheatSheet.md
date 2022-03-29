@@ -17,13 +17,20 @@ More details | `kubectl describe -f <myapp.yml>`
 Pod logs  | `kubectl get logs <pod_name>`
 Events | `kubectl get events`
 
+## Taint and Tolerances
+List the taints
+Remove the taints
+
 ## Pods
 Usage | Command
 :---- | :------
+List the pods | `kubectl get pods`
 Pods Ip address | `kubectl get pods -o wide`
 Pod logs | `kubectl logs dapi-test-pod`
 container logs | `kubectl logs <pod_name> -c <container_name>`
 Init container logs | `kubectl logs <pod_name> -c <init_container_name>`
+Get the pod yaml | `kubectl get pod <pod_name> -o yaml`
+Delete a pod | `kubectl delete pod <pod_name>`
 
 
 ### Pod labels
@@ -69,4 +76,7 @@ List | `kubectl get rs`
 ## Service
 Usage | Command
 :---- | :------
+Create a service | `kubectl expose pod <pod_name> --name svc1 --port 80 --target-port 80 --type nodeport`
+List the services | `kubectl get services`
+Describe the service | `kubectl describe svc svc1`
 List the backend pods | `kubectl get backends`

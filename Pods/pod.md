@@ -95,6 +95,14 @@ starting in the Pending phase, moving through Running if at least one of its pri
 
 > Pods are only scheduled once in their lifetime. Once a Pod is scheduled (assigned) to a Node, the Pod runs on that Node until it stops or is terminated.
 
+There are five stages in the lifecycle of a pod, The status of a pod tells you what stage of the lifecycle it’s at currently.
+
+1. **Pending**: This state shows at least one container within the pod has not yet been created.
+2. **Running**: All containers have been created, and the pod has been bound to a Node. At this point, the containers are running, or are being started or restarted.
+3. **Succeeded:** All containers in the pod have been successfully terminated and will not be restarted.
+4. **Failed:** All containers have been terminated, and at least one container has failed. The failed container exists in a non-zero state.
+5. **Unknown:** The status of the pod cannot be obtained.
+6. 
 ## Pod lifetime
 Like individual application containers, Pods are considered to be relatively ephemeral (rather than durable) entities. Pods are created, assigned a unique ID (UID), and scheduled to nodes where they remain until termination (according to restart policy) or deletion. If a Node dies, the Pods scheduled to that node are scheduled for deletion after a timeout period.
 
@@ -259,3 +267,43 @@ Also, you can get pod and container fields that are available through Kubernetes
 			  resource: limits.memory
 			  
 > As we can see, there are a lot of options available in Kubernetes when defining environment variables. You need to pick the right approach. If you want to manage sensitive information like passwords and other secrets, then you should use Secret instead of ConfigMap.
+
+## Init container
+A [Pod](https://kubernetes.io/docs/concepts/workloads/pods/) can have multiple containers running apps within it, but it can also have one or more init containers, which are run before the app containers are started.
+
+Init containers are exactly like regular containers, except:
+-   Init containers always run to completion.
+-   Each init container must complete successfully before the next one starts.
+
+If a Pod's init container fails, the kubelet repeatedly restarts that init container until it succeeds. However, if the Pod has a `restartPolicy` of Never, and an init container fails during startup of that Pod, Kubernetes treats the overall Pod as failed.
+
+### Differences from regular containers[](https://kubernetes.io/docs/concepts/workloads/pods/init-containers/#differences-from-regular-containers)
+Init containers support all the fields and features of app containers, including resource limits, volumes, and security settings. However, the resource requests and limits for an init container are handled differently, as documented in [Resources](https://kubernetes.io/docs/concepts/workloads/pods/init-containers/#resources).
+
+Also, init containers do not support `lifecycle`, `livenessProbe`, `readinessProbe`, or `startupProbe` because they must run to completion before the Pod can be ready.
+
+If you specify multiple init containers for a Pod, kubelet runs each init container sequentially. Each init container must succeed before the next can run. When all of the init containers have run to completion, kubelet initializes the application containers for the Pod and runs them as usual.
+
+#### Init containers in use[](https://kubernetes.io/docs/concepts/workloads/pods/init-containers/#init-containers-in-use)
+This example defines a simple Pod that has two init containers. The first waits for `myservice`, and the second waits for `mydb`. Once both init containers complete, the Pod runs the app container from its `spec` section.
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: myapp-pod
+  labels:
+    app: myapp
+spec:
+  containers:
+  - name: myapp-container
+    image: busybox:1.28
+    command: ['sh', '-c', 'echo The app is running! && sleep 3600']
+  initContainers:
+  - name: init-myservice
+    image: busybox:1.28
+    command: ['sh', '-c', "until nslookup myservice.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for myservice; sleep 2; done"]
+  - name: init-mydb
+    image: busybox:1.28
+    command: ['sh', '-c', "until nslookup mydb.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for mydb; sleep 2; done"]
+```
