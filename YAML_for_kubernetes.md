@@ -1,6 +1,8 @@
 # YAML for K8s
 > __It covers only k8s dependent YAML specification.__
 
+Ref: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.23/#-strong-api-overview-strong-
+
 ## What is YAML
 YAML is called as ain't markup language or Yet Another Markup Language, and is actually a data serialization language instead of a just markup language like html.
 
