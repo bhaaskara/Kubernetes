@@ -41,24 +41,58 @@ metadata:
 spec: 
   containers: 
   - name: demo 
-      image: ngnix
+    image: ngnix
 ```
 In above specification , you can see that we have specified name and labels in matadata field.
 The spec starts with cotainer field and we have added a container specification under it.
 
 You might be wondering , how can we memories all these options. In reality , you don’t have to.
 
-So lets discuss about command kubectl explain so that we don’t have to remember all YAML specs of kubernetes objects.
+So lets discuss about command `kubectl explain` so that we don’t have to remember all YAML specs of kubernetes objects.
 
-With kubectl explain subcommand , you can see the specification of each objects and can use that as a reference to write your YAML files.
+With `kubectl explain` subcommand , you can see the specification of each objects and can use that as a reference to write your YAML files.
 
 **Fist level spec**
 We will use `kubectl explain Pod` command to see the specifications of a Pod YAML.
 
--- command o/p
+`kubectl explain pod`
+```
+KIND:     Pod
+VERSION:  v1
+
+DESCRIPTION:
+     Pod is a collection of containers that can run on a host. This resource is
+     created by clients and scheduled onto hosts.
+
+FIELDS:
+   apiVersion   <string>
+     APIVersion defines the versioned schema of this representation of an
+     object. Servers should convert recognized schemas to the latest internal
+     value, and may reject unrecognized values. More info:
+     https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+
+   kind <string>
+     Kind is a string value representing the REST resource this object
+     represents. Servers may infer this from the endpoint the client submits
+     requests to. Cannot be updated. In CamelCase. More info:
+     https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+
+   metadata     <Object>
+     Standard object's metadata. More info:
+     https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
+
+   spec <Object>
+     Specification of the desired behavior of the pod. More info:
+     https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
+
+   status       <Object>
+     Most recently observed status of the pod. This data may not be up to date.
+     Populated by the system. Read-only. More info:
+     https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
+```
 
 As we discussed earlier , the specification is very familiar.
-Filed status is `readonly` and its system populated , so we don’t have to write anything for status.
+Field status is `readonly` and its system populated , so we don’t have to write anything for status.
 
 **Exploring inner fields**
 If we want to see the fields available in spec , then execute below command.  
@@ -87,7 +121,41 @@ spec:
     image: httpd
 ```
 How do I know the containers array element need name and image ?
-We will use explain command to get those details.  
+We will use explain command to get those details.   
+
 `$kubectl explain pod.spec.containers`
---- cmd o/p
+```
+KIND:     Pod
+VERSION:  v1
+
+RESOURCE: spec <Object>
+
+DESCRIPTION:
+     Specification of the desired behavior of the pod. More info:
+     https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
+
+     PodSpec is a description of a pod.
+
+FIELDS:
+   activeDeadlineSeconds        <integer>
+     Optional duration in seconds the pod may be active on the node relative to
+     StartTime before the system will actively try to mark it failed and kill
+     associated containers. Value must be a positive integer.
+
+   affinity     <Object>
+     If specified, the pod's scheduling constraints
+
+   automountServiceAccountToken <boolean>
+     AutomountServiceAccountToken indicates whether a service account token
+     should be automatically mounted.
+
+   containers   <[]Object> -required-
+     List of containers belonging to the pod. Containers cannot currently be
+     added or removed. There must be at least one container in a Pod. Cannot be
+     updated.
+
+   dnsConfig    <Object>
+     Specifies the DNS parameters o...
+```
+
 > As you can see , name and image are of type string which means , you have to provide a string value to it.

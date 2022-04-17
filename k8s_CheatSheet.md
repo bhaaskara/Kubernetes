@@ -12,6 +12,8 @@
 # General
 Usage | Command
 :---- | :------
+YAML help | `kubectl explain <pod>`
+Syntax check/YAML check | `kubectl create -f sample.yml --dry-run=clinet`
 Get the status | `kubectl get -f <file.yml>`
 More details | `kubectl describe -f <myapp.yml>`
 Pod logs  | `kubectl get logs <pod_name>`

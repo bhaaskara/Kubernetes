@@ -57,7 +57,7 @@
    `sudo apt-get install -y docker-ce docker-ce-cli containerd.io --allow-downgrades`
    
    > to Install specific version  
-   > sudo apt-get install -y docker-ce=<DocerVersion> docker-ce-cli=<DocerVersion> containerd.io --allow-downgrades
+   > sudo apt-get install -y docker-ce=_DocerVersion_ docker-ce-cli=_DocerVersion_ containerd.io --allow-downgrades
 
 7. Install K8s 
    ```sh
@@ -103,3 +103,76 @@
    `kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml`
 10. Join the worker nodes using kubeadm join command
    > #kubeadm join 10.128.0.16443 --token swi0ci.jq9l75eg8lvpxz9i-discovery-token-ca-cert-hash sha256:2c3cdfa898334b0dfc0f73bbccb998d03f61252ee50f0405c85ba735ff90b5e2
+
+# K8s deployment on on-premises
+## Cluster infrastructure
+### Check list
+```
+1. Control plane high availability
+2. worked node high availability
+3. Shared storage management
+4. observability stack (Cluster monitoring)
+```
+
+### Control plane HA
+- Master components or control pane components with HA
+- etcd should be on two different nodegroups
+
+### Worked nodes HA
+**on public cloud**
+worker nodes has to be deployed on worker node groups
+i.e in auto scaling (AS) groups in different Availability zones (AZ)
+
+### Shared storage management
+Shared storage management (EBS and EFS) for Statefulset applications.
+
+### Observability stack
+- prometheus and grafana
+- ELK
+
+## Cluster services
+```
+1. Cluster access
+2. PSP (pod security policy)
+3. custom policies and rules
+4. custom DNS (not core DNS)
+5. Restricted network policies
+```
+
+### Cluster access
+- RBAC (Role Based Access Control) or ABAC (Attribute based access control)
+- AWS IAM or LDAP
+- PSP (Pod security policy)
+    - Never deploy a privileged pod into kubesystem name space
+
+### Custom policies and rules
+ex:
+- Images should be only from private repository
+- every name space should have labels
+- every pod should have resource limits
+
+### Custom DNS
+k8s comes with core DNS, but custom DNS is always recommended.
+in case managed k8s (i.e EKS/AKS/GKE) no need to have self managed DNS or custom DNS.
+
+### Restricted network policies
+By default k8s allows all traffic across pods with in the cluster which is not recommended, so create a deny all policy and allow only required traffic.
+
+
+### Security checks
+- kube-scan, is for configuration scanning
+- kube-bench , is for security bench marks we can check other standards
+
+
+## Backup and Restore
+- CP snap shots
+- etcd-DB backup
+
+# Apps and Deployments
+- Image quality and vulnerability scanning
+- Ingress controller (popular nginx ingress controller)
+
+## Observability
+- built in observability is through readyness probe and liveness probe
+- third party tools are ELK, Datadog, app dynamics
+-  
