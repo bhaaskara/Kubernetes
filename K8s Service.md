@@ -1,5 +1,8 @@
 # What is a k8s service
 In Kubernetes, a Service is an abstraction which defines a logical set of Pods and a policy by which to access them. 
+
+A “service” is defined as the combination of a group of pods, and a policy to access them
+
 The set of Pods targeted by a Service is usually determined by a [selector](https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/).
 
 `k8s def:` An abstract way to expose an application running on a set of [Pods](https://kubernetes.io/docs/concepts/workloads/pods/) as a network service.
@@ -31,7 +34,7 @@ spec:                #no type specified here
 
 ![[Pastedimage20220107151525.png]](/Images/Pastedimage20220107151525.png)
 - pods are identified by the selectors, i.e pod labels  
-- all the selectors should match with the pod labels, not just one of them
+- **all the selectors should match with the pod labels, not just one of them**
 
 ## Node Port
 - Exposes the Service on each Node's IP at a static port (the `NodePort`). 
@@ -39,15 +42,63 @@ spec:                #no type specified here
 - You'll be able to contact the `NodePort` Service, from outside the cluster, by requesting `<NodeIP>:<NodePort>`.
 - Node port range - 30000 - 32768
 
+### Node port limitations
+- need to track which nodes have pods with exposed ports.  
+- it only exposes one service per port.
+- the ports available to NodePort are in the 30,000 to 32,767 range
 
 ## Load balancer
+This is the default method for many Kubernetes installations in the cloud, and it works great. It supports multiple protocols and multiple ports per service. But by default it uses an IP for every service, and that IP is configured to have its own load balancer configured in the cloud. These add costs and overhead that is overkill for essentially every cluster with multiple services, which is almost every cluster these days.
+
+
 Exposes the Service externally using a cloud provider's load balancer. `NodePort` and `ClusterIP` Services, to which the external load balancer routes, are automatically created.
+
+load balancer module only works out-of-the-box on the largest public clouds for various reasons.
+
+### Load Balancers in the Cloud vs on Bare Metal
+There is an advantage to using the Kubernetes Load Balancer feature on the biggest public clouds. Through the cloud controller, Kubernetes will automatically provision and deprovision the required external IP and associated load balancer, and the nodes it will connect to in the cluster.
+
+If you are running on-premises, especially on bare metal, there is no load-balancer service and pool of IPs just sitting idle and waiting for general usage. This is where the open source project [MetalLB](https://metallb.universe.tf/) comes into play. It has been designed from the ground up to specifically address this need for Kubernetes. It is still a fairly new project and requires experience to make it stable and reliable. Platform9 includes MetalLB and has the expertise to support on-premise deployments.
+
+MetalLB even runs within Kubernetes to make it easier to manage and maintain. To use MetalLB you need a pool of IP addresses it can distribute, and a few ports open. It even supports working with Border Gateway Protocol ([BGP](https://www.cloudflare.com/en-ca/learning/security/glossary/what-is-bgp/)) for more complex networking scenarios. For example, when multiple Kubernetes clusters are involved in the environment. 
+
+In these multi-cluster scenarios, MetalLB manages the pool of IPs across the clusters including which cluster is primary, secondary, and tertiary for specific services.
 
 ## ExternalName
 Maps the Service to the contents of the `externalName` field (e.g. `foo.bar.example.com`), by returning a `CNAME` record with its value. No proxying of any kind is set up.
 
 > You can also use [Ingress](https://kubernetes.io/docs/concepts/services-networking/ingress/) to expose your Service. Ingress is not a Service type, but it acts as the entry point for your cluster. It lets you consolidate your routing rules into a single resource as it can expose multiple services under the same IP address
 
+## Ingress
+While ingress – in normal networking functionality – refers to any inbound traffic, in Kubernetes it strictly refers to the API that manages traffic routing rules like SSL termination. The ingress controller in Kubernetes is the application that is deployed to implement those rules.
+
+Ingress isn’t a service type like NodePort, ClusterIP, or LoadBalancer. Ingress actually acts as a proxy to bring traffic into the cluster, then uses internal service routing to get the traffic where it is going. Under the hood, Ingress will use a NodePort or LoadBalancer service to expose itself to the world so it can act as that proxy.
+
+Here is an example of how ingress works: A deployment would define a new service. It would then tell Ingress that new.app.example.com is the external DNS that maps to the service. The service wants to receive traffic on TCP port 8181. The Ingress controller then sets up those rules so when it receives a request asking for new.app.example.com:8181, it knows where to send the payload and URI information for processing. 
+
+The actual rules can get much more complicated. Out-of-the-box, they typically stick to layer 4 requests like the example above; although layer 7 requests involving cookie paths and specific query parameters on the URI are becoming more prevalent; especially when a service mesh is involved. Service meshes, like Istio, allow very fine-grained control of how traffic is sent to one or more versions of a service – including blue/green, AB, Canary, or even payload-based. 
+
+As an additional benefit, service meshes can even route services between Kubernetes clusters without using Ingress or any of the other methods discussed here.
+
+Commonly used ingress controllers are NGINX, Contour, and HAProxy.
+
+## Which to use
+|     | Node port | Load balancer | Ingress |
+| :-- | :--  | :-- |:-- |
+| Supported by core Kubernetes | Yes | Yes | Yes |
+| Works on every platform Kubernetes will deploy | Yes | Only supports a few public clouds. MetalLB project allows use on-premises. | Yes |
+| Direct access to service | Yes | Yes | No |
+| Proxies each service through third party (NGINX, HAProxy, etc) | No | No | Yes |
+| Multiple ports per service | No | Yes | Yes |
+| Multiple services per IP | Yes | No | Yes |
+| Allows use of standard service ports (80, 443, etc) | No | Yes | Yes |
+| Have to track individual node IPs | Yes | No | Yes, when using NodePort; No, when using LoadBalancer |
+
+NodePort wins on simplicity, but you need to open firewall rules to allow access to ports 30,000 to 32,767, and know the IPs of the individual worker nodes.
+
+LoadBalancer when on a public cloud, or supported by MetalLB, works great with the service being able to control the exact port it wants to use. The downside is it can get expensive, as every service will get its own load balancer and external IP, which cost `$$$` on the public cloud.
+
+Ingress is becoming the most commonly used, combined with the load balancer service; especially with MetalLB now available, as it minimizes the number of IPs being used while still allowing for every service to have its own name and/or URI routing.
 
 # Service end points
 K8s creates a end point object same name as service, to track of which pods are the members/end points of the service.
