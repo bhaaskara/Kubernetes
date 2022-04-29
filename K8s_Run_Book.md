@@ -125,6 +125,71 @@ spec:
     - __Drain a node will cordon the node aswell__
                                                                            
 
+# Service
+## Ingress
+### Configure ingress in minikube
+![](Pasted%20image%2020220423154808.png)
+
+```
+1. Install ngnix ingress controller
+2. Create ingress rule
+```
+
+**1. Install Nginx ingress controller**
+`minikube addons enable ingress`
+Automatically starts the k8s nginx implementation of ingress controller
+
+check the status
+`kubectl get pods -n kube-system`
+
+**2. Create ingress rule**
+Create an ingress rule to access the minikube dashboard externally
+
+Get the kubernetes dashboard details
+`kubectl get all -n kubernetes-dashboard`
+
+```yml
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: dashboard-ingress
+  namespace: kubernetes-dashboard
+spec:
+  rules:
+  - host: dashboard.com
+    http:
+      paths:
+      - backend:
+          serviceName: kubernetes-dashboard #kubernetes internal service name
+          servicePort: 80
+```
+`kubectl apply -f ingress.yml`
+`kubectl get ingress -n kubernetes-dashboard`
+Note: wait for some time for the ip to be assigned
+
+add the ingress ip in hosts file for it to resolve
+```sh
+vi /etc/hosts
+
+...
+192.168.64.5    dashboard.com
+```
+
+### Configure default backend
+![](Pasted%20image%2020220423161123.png)
+this is in general used to configure some custom error message.
+
+### multiple paths for same host
+![](Pasted%20image%2020220423161544.png)
+
+### Multiple sub-domains or domains
+![](Pasted%20image%2020220423161754.png)
+
+### Configuring tls certificate
+![](Pasted%20image%2020220423161915.png)
+![](Pasted%20image%2020220423162017.png)
+
+
 # K8s Issues and trouble shooting
 ## Pod trouble shooting
 ```

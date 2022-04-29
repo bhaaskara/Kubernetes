@@ -17,7 +17,7 @@ https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/
 
 ## statefulset limitations
  - The storage for a given Pod must either be provisioned by a PersistentVolume Provisioner based on the requested storage class, or pre-provisioned by an admin 
- - Deleting and/or scaling a StatefulSEt down will not delete the volumes associated with the StatefulSet 
+ - Deleting and/or scaling a Statefulset down will not delete the volumes associated with the StatefulSet 
  - StatefulSets currently require Headless Service to be responsible for the network identity of the Pods 
  - StatefulSets do not provide any guarantees on the termination of pods when a StatefulSet is deleted 
  - When using Rolling Updates with the default Pod Management Policy (OrderedReady), it's possible to get into a broken state that requires [manual intervention to repair](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#forced-rollback).

@@ -1,10 +1,10 @@
 **Helm synopsys**
 ```
 Helm is package manager for Kubernetes.
-Helm deployes all the reources defined in yaml files under ./<charname>/templates to k8s cluster.
+Helm deployes all the reources defined in yaml files under ./<chartname>/templates to k8s cluster.
 Helm should be installed and configured on a machine with k8s access through kubectl.
-and while deploying it uses the values defined in values.yaml (./<charname>/values.yaml)
-and dependencies be mentioned/defined in chart.yaml (./<charname>/chart.yaml)
+and while deploying it uses the values defined in values.yaml (./<chartname>/values.yaml)
+and dependencies be mentioned/defined in chart.yaml (./<chartname>/chart.yaml)
 ```
 ## What is Helm
 **A helmsman or “helm” is a person who steers a ship, sailboat, submarine, other types of maritime vessel, or spacecraft.** — Wikipedia  
@@ -27,7 +27,7 @@ It can optionally (and by default if you use helm create) have a few more compon
 mytestchart/                       # Directory with Chart name  
 ├── Chart.yaml                     # A YAML file containing information about the chart  
 ├── charts                         # Dir Contains sub charts/Dependencies  
-├── templates                      # upon which helm install ation (directory of templates that, when combined with values, will generate valid Kubernetes manifest files.)   
+├── templates                      # upon which helm install action (directory of templates that, when combined with values, will generate valid Kubernetes manifest files.)   
 │   ├── NOTES.txt                  # Contents will be displayed upon chart installation     
 │   ├── _helpers.tpl               # contains the templates  
 │   ├── deployment.yaml  
@@ -78,7 +78,7 @@ acccess it using `{{ .Values.global.orgdomain }}`
 ### Passing variables through CLI
 `helm install release1 ./mychart1 --set costCode=C3245`
 > `--set` will have higher precedence over values.yaml file
-> This will be useful when u want to set variables peticular to that release. 
+> This will be useful when u want to set variables particular to that release. 
 
 ## Chart functions
  [Chart Template function](https://masterminds.github.io/sprig/)  

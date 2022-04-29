@@ -279,4 +279,9 @@ automatically starts the k8s nginx implementation of Ingress controller.
  ELK is for logging
 
  Kibana and tabview is alternatives for graphana.
- 
+
+# Kubernetes Overview
+
+Pods
+![](Pasted%20image%2020220426195051.png)
+

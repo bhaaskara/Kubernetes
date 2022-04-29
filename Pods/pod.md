@@ -21,6 +21,7 @@ You can also inject *ephemeral containers* for debugging if your cluster offers 
 > Be careful: Pods are not self-healing.
 > Restarting a container in a Pod should not be confused with restarting a Pod. 
 > A Pod is not a process, but an environment for running container(s). A Pod persists until it is deleted.
+> Pods are ephemeral and every time it restarts it gets a new IP.
 
 ## Container Restart Policy
 Flag | Description

@@ -177,9 +177,47 @@ subsets:
       - port: 9376
 ```
 
+# Ingress
+![](Pasted%20image%2020220422195059.png)
 
+Example Ingress YAML
+![](Pasted%20image%2020220422195421.png)
+Note: https is not yet configured.
 
-## QA
+![](Pasted%20image%2020220422195707.png)
+
+- Here Internal service type is default - clusterIP.
+
+![](Pasted%20image%2020220422200052.png)
+![](Pasted%20image%2020220422200130.png)
+
+## Ingress implementation
+### Ingress controller
+- evaluates all the rules
+- manages redirections
+- entry point to the cluster
+- Many third party implementation and Nginix ingress controller is one of the popular ones.
+
+`Need to implement ingress controller that evaluates and process ingress rules, for the ingress to work` 
+
+![](Pasted%20image%2020220422200411.png)
+
+![](Pasted%20image%2020220422200511.png)
+
+## Ingress on cloud
+![](Pasted%20image%2020220422201040.png)
+## Ingress on bare metal
+![](Pasted%20image%2020220422201153.png)
+**Proxy server**
+- separate server
+- Assigned with public IP address and open ports
+- entry point to the cluster
+
+**_no server in k8s cluster is accessible externally_**
+
+![](Pasted%20image%2020220422201610.png)
+
+# QA
 how to find the individual pods IPs through NS lookup of service
 how the load balancer works, as it uses target port and node port and cluster IP.
 how to configure ingress
