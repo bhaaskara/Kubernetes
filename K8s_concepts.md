@@ -280,7 +280,34 @@ automatically starts the k8s nginx implementation of Ingress controller.
 
  Kibana and tabview is alternatives for graphana.
 
-# Kubernetes Overview
+# RBAC in K8s
+Ref: https://github.com/marcel-dempers/docker-development-youtube-series/tree/master/kubernetes/rbac
+(this is forked)
+https://www.youtube.com/watch?v=jvhKOAyD8S8
+
+- Roles and role bindings are name space level
+- cluster role and cluster role binding are at cluster level and grant permission to all name spaces.
+
+**Note:** Kubernetes has no concept of users, it trusts certificates that is signed by its CA.
+
+`In managed k8s like AKS,EKS or GKE it uses OAUTH authentication mechanism`.
+
+
+## Kubeconfig file
+The `kubectl` command-line tool uses kubeconfig files to find the information it needs to choose a cluster and communicate with the API server of a cluster.
+Use kubeconfig files to organize information about clusters, users, namespaces, and authentication mechanisms.
+
+By default, `kubectl` looks for a file named `config` in the `$HOME/.kube` directory. You can specify other kubeconfig files by setting the `KUBECONFIG` environment variable or by setting the [`--kubeconfig`](https://kubernetes.io/docs/reference/generated/kubectl/kubectl/) flag.
+
+**Note:** A file that is used to configure access to clusters is called a _kubeconfig file_. This is a generic way of referring to configuration files. It does not mean that there is a file named `kubeconfig`.
+
+**Warning:** Only use kubeconfig files from trusted sources. Using a specially-crafted kubeconfig file could result in malicious code execution or file exposure. If you must use an untrusted kubeconfig file, inspect it carefully first, much as you would a shell script.
+
+
+**Context** binds users with the cluster and namespace.
+
+--- its incomplete.
+# Kubernetes Summary
 
 Pods
 ![](Pasted%20image%2020220426195051.png)
