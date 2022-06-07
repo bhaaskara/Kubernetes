@@ -7,11 +7,11 @@
 # Pods
 ## Connect to a Running Container
 ```sh
-kubectl exec -it shell-demo -- /bin/bash 
+kubectl exec -it <pod_name> -- /bin/bash 
 ```
 Running individual commands in a container
 ```sh
-kubectl exec shell-demo env
+kubectl exec <pod_name> env
 ```
 examples
 ```sh
@@ -21,7 +21,7 @@ kubectl exec shell-demo -- cat /proc/1/mounts
 ```
 ## connect to a container when a pod has more than one container
 ```sh
-kubectl exec -i -t my-pod --container main-app -- /bin/bash
+kubectl exec -i -t <my-pod> --container <main-app> -- /bin/bash
 ```
 ## Create a static Pod
 Create the staticpod definition yml file under `/etc/kubernetes/manifests` on node, where you want to create the static pod. 
@@ -109,6 +109,22 @@ spec:
       - name: nginx 
         image: nginx:latest
 ```           
+
+## HPA
+https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale-walkthrough/
+```
+1. Install Metrics Server
+2. Deploy Deployment, Service, HPA
+3. Increase Load
+4. check Pod scale!
+
+Note - Need node larger than t3.micro, recommended m5.large on AWS
+```
+
+**1. Install metrics server**
+    kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+**2. Deploy Deployment, service, HPA**
+    
 # K8s nodes upgrade
 - check the release notes of new version
 - Upgrading from 1.16 to 1.18

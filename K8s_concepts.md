@@ -61,12 +61,14 @@ Pods per node | 100
 - When CPU reaches limit, its throttles
 - When memory reaches limit, POD will be evicted
 - Proper requests and limits save cost as well
+
 ## How do you cost/performace optimize your k8s app ?
 Detect CPU/Memory waste - Utiliza metrics server.
 ex:  - Cloudwatch container insights (AWS)
        - kubecost
        - cloudhealth
        - kubernetes resource report
+
 ## Use readyness and liveness probes
 ## Secure k8s
 - k8s security
@@ -307,6 +309,172 @@ By default, `kubectl` looks for a file named `config` in the `$HOME/.kube`�
 **Context** binds users with the cluster and namespace.
 
 --- its incomplete.
+
+# Horizontal Pod Autoscaler (HPA)
+Deployment.yml
+```yml
+apiVersion: apps/vl 
+kind: Deployment
+metadata: 
+  name: php-apache
+spec: 
+  selector:
+    matchLabels:
+	  run: php-apache 
+  replicas: 1I 
+  template: 
+    metadata: 
+      lables:
+	    run: php-apache 
+    spec : 
+      containers:
+	  - name: php-apache 
+        image: k8s.gcr.io/hpa-example 
+        ports: 
+        - containerPort: 80
+		resources:
+		  requests:
+		    cpu: 500m
+		  limits:
+		    cpu: 1000m
+```
+
+HPA.yml
+```yml
+apiVersion: autoscaling/v1 
+kind: HorizontalPodAutoscaler 
+metadata: 
+  name: php-apache 
+  namespace: default 
+spec: 
+  scaleTargetRef : 
+    apiVersion: apps/vl 
+    kind: Deployment 
+    name: php-apache
+  minReplication: 1 
+  maxReplication: 10
+  targetCPUUtilizationPercentage: 50
+```
+
+**Note:** it needs metrics server to be configured.
+
+# Probes - Liveness, Readiness, and Startup Probes
+A probe is a periodic check that monitors the health of an application.
+Kubernetes evaluates application health status via probes and automatic application restart.
+
+Applications can become unreliable for a variety of reasons, for example:
+-   Temporary connection loss
+-   Configuration errors
+-   Application errors
+
+Developers can use probes to monitor their applications. Probes make developers aware of events such as application status, resource usage, and errors.
+
+There are currently three types of probes in Kubernetes:
+- Startup probe
+- Readiness probe
+- Liveness probe
+
+## Startup Probe
+A startup probe verifies whether the application within a container is started. Startup probes run before any other probe, and, unless it finishes successfully, disables other probes. If a container fails its startup probe, then the container is killed and follows the pod’s `restartPolicy`.
+
+This type of probe is only executed at startup, unlike readiness probes, which are run periodically.
+
+The startup probe is configured in the `spec.containers.startupprobe` attribute of the pod configuration.
+
+## Readiness Probe
+Readiness probes determine whether or not a container is ready to serve requests. If the readiness probe returns a failed state, then Kubernetes removes the IP address for the container from the endpoints of all Services.
+
+Developers use readiness probes to instruct Kubernetes that a running container should not receive any traffic. This is useful when waiting for an application to perform time-consuming initial tasks, such as establishing network connections, loading files, and warming caches.
+
+The readiness probe is configured in the `spec.containers.readinessprobe` attribute of the pod configuration.
+
+## Liveness Probe
+Liveness probes determine whether or not an application running in a container is in a `healthy` state. If the liveness probe detects an unhealthy state, then Kubernetes kills the container and tries to redeploy it.
+
+The liveness probe is configured in the `spec.containers.livenessprobe` attribute of the pod configuration.
+
+Kubernetes provides five options that control these probes:
+
+Name | Mandatory Description | | Default Value
+:-- | :-- | :-- | :--
+`initialDelaySeconds` | Yes | Determines how long to wait after the container starts before beginning the probe. | 0
+`timeoutSeconds` | Yes | Determines how long to wait for the probe to finish. If this time is exceeded, then Kubernetes assumes that the probe failed.| 1
+`periodSeconds` | No | Specifies the frequency of the checks. |10
+`successThreshold` | No | Specifies the minimum consecutive successes for the probe to be considered successful after it has failed.| 1
+`failureThreshold` | No | Specifies the minimum consecutive failures for the probe to be considered failed after it has succeeded.|3
+
+**The liveness probe passes when the app itself is healthy.**
+**but the readiness probe additionally checks that each required back-end service is available.**
+This helps you avoid directing traffic to Pods that can only respond with error messages.
+
+**If your container needs to work on loading large data, configuration files, or migrations during startup, you can use a [startup probe](https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#when-should-you-use-a-startup-probe).**
+
+
+## Methods of Checking Application Health
+Startup, readiness, and liveness probes can check the health of applications in three ways: HTTP checks, container execution checks, and TCP socket checks.
+
+### HTTP Checks
+An HTTP check is ideal for applications that return HTTP status codes, such as REST APIs.
+
+HTTP probe uses GET requests to check the health of an application. The check is successful if the HTTP response code is in the range 200-399.
+
+The following example demonstrates how to implement a readiness probe with the HTTP check method:
+```
+_...contents omitted..._
+readinessProbe:
+  httpGet:
+    path: /health #(1)
+    port: 8080
+  initialDelaySeconds: 15 #(2)
+  timeoutSeconds: 1 #(3)_...contents omitted..._
+```
+
+1.  The readiness probe endpoint.
+2.  How long to wait after the container starts before checking its health.
+3.  How long to wait for the probe to finish.
+    
+### Container Execution Checks
+Container execution checks are ideal in scenarios where you must determine the status of the container based on the exit code of a process or shell script running in the container.
+
+When using container execution checks Kubernetes executes a command inside the container. Exiting the check with a status of `0` is considered a success. All other status codes are considered a failure.
+
+The following example demonstrates how to implement a container execution check:
+```
+_...contents omitted..._
+livenessProbe:
+  exec:
+    command:**(1)**
+    - cat
+    - /tmp/health
+  initialDelaySeconds: 15
+  timeoutSeconds: 1
+_...contents omitted..._
+
+1.  The command to run and its arguments, as a YAML array.
+    
+```
+
+### TCP Socket Checks
+A TCP socket check is ideal for applications that run as daemons, and open TCP ports, such as database servers, file servers, web servers, and application servers.
+
+When using TCP socket checks Kubernetes attempts to open a socket to the container. The container is considered healthy if the check can establish a successful connection.
+
+The following example demonstrates how to implement a liveness probe by using the TCP socket check method:
+```
+_...contents omitted..._
+livenessProbe:
+  tcpSocket:
+    port: 8080 **(1)**
+  initialDelaySeconds: 15
+  timeoutSeconds: 1
+_...contents omitted..._
+```
+
+1.  The TCP port to check.
+
+## Creating Probes
+To configure probes on a deployment, edit the deployment’s resource definition. To do this, you can use the `kubectl edit` or `kubectl patch` commands. Alternatively, if you already have a deployment YAML definition, you can modify it to include the probes and then apply it with `kubectl apply`.
+
 # Kubernetes Summary
 
 Pods

@@ -213,3 +213,4 @@ You can set `.spec.revisionHistoryLimit` field in a Deployment to specify how ma
 ## Deployment strategy
 ### Canary deployment
 https://phoenixnap.com/kb/kubernetes-canary-deployments
+    
