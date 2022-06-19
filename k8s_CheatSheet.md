@@ -55,7 +55,6 @@ Usage | Command
 :---- | :------
 List Configmaps | `kubectl get configmaps`
 Describe Configmap | `kubectl describe configmaps my-config`
-
 Get configmap yaml | `kubectl get configmaps my-config -o yaml`
 
 # Deployments
