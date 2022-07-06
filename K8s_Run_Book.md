@@ -206,6 +206,7 @@ this is in general used to configure some custom error message.
 ![](Pasted%20image%2020220423162017.png)
 
 
+
 # K8s Issues and trouble shooting
 ## Pod trouble shooting
 ```
