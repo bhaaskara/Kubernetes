@@ -89,6 +89,15 @@ List the services | `kubectl get services`
 Describe the service | `kubectl describe svc svc1`
 List the backend pods | `kubectl get backends`
 
+# Storage
+Usage | Command
+:---- | :------
+List storage classes | `Kubectl get storageclass`
+SC Details | `Kubectl describe storage class <name>`
+List PVs | `kubectl get pv`
+PV details | `Kubectl describe pv <name>`
+List PVC | `kubectl get pvc`
+
 # Debugging
 Usage | Command
 :-- | :--

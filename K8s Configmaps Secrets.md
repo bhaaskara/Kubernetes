@@ -193,5 +193,7 @@ Get/list the secrets
 Describe the secret
 `kubectl describe secrets/<mysecret>`
 
-> base64 encoding: `echo -n 'string' | base64`
+> base64 encoding: `echo -n 'string' | base64`  or you can use URL: https://www.base64encode.org
    base64 decoding: `echo "encodedstring" | base64 --decode`
+
+Ref: https://github.com/bhaaskara/azure-aks-kubernetes-masterclass/tree/master/07-Kubernetes-Secrets

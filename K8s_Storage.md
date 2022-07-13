@@ -9,15 +9,11 @@ In Kubernetes, the most basic type of storage is non-persistent - which is known
 Kubernetes supports multiple types of persistent storage. This can include file, block, or object storage services from cloud providers (such as Amazon S3), storage devices in the local data center, or data services like databases. 
 Kubernetes provides mechanisms to abstract this storage for applications running on containers, so that applications never communicate directly with storage media.
 
-## Volumes
-Volumes are basic entities in Kubernetes, used to provide storage to containers. A volume can support all types of storage, including network file system (NFS), local storage devices, and cloud-based storage services. You can also build your own storage plugins to support new storage systems. Access to volumes can be achieved directly via pods or through persistent volumes
-
-```
-The kubernetes volume in its simplest form is a directory that's attached to a pod and mounted to one or more containers within the pod.
-```
-
-## Container Storage Interface (CSI)
-CSI is a Kubernetes extension that simplifies storage management. Before CSI, users needed to integrate the data store’s device driver with Kubernetes, which was quite complex. CSI provides an extensible plugin architecture, so you can easily add plugins that support the storage devices and services used in your organization.
+**Persistent Volume**: A piece of storage can be used for Kubernetes 
+**Persistent Volume Claim**: A request for PV 
+**Storage Class**: A collection of PV 
+**Provisioner**: Used to provision PV 
+**Volume**: Referring to the storage used by the Pod 
 
 ## Persistent volumes and   Persistent Volume Claims (PVC)
 To enable persistent storage, Kubernetes uses two key concepts:
@@ -63,6 +59,27 @@ Attaching | Persistent volume claim
  - using
  - Reclaiming
 
+### PV access modes
+- Read-Write-Once (RWO)
+- Read-Write-Many (RWX)
+- Read-Only-Many (ROX)
+
+**Read-Write-Once** type storage only can be read/write on one node at any given time.
+- High performance block device
+- AWS EBS, Azure Disk, Google Persistent Disk, Ceph RBD, Longhorn
+
+**Read-Write-Many** type storage can be read/write on multiple nodes at the same time.
+- Distributed Filesystem
+- AWS EFS, NFS, GlusterFS, CephFS
+
+### Deployment vs StatefulSet   
+- **Pods in one Deployment** share the same volume   
+    - No matter which node the pod runs on   
+    - Better suit for RWX type storage   
+• **Each Pod in one StatefulSet** can have one volume   
+    • VolumeClaimTemplate   
+    • Better suit for RWO type storage
+
 ## Storage class
 `StorageClass refers to a volume plugin, also called a provisioner`
 
@@ -100,6 +117,15 @@ volumeBindingMode: Immediate
     - fsType 
     - Encrypted 
     - Kmskeyid
+
+**Persistent storage in K8s before storage class**
+![](Pasted%20image%2020220707233833.png)
+
+**Persistent storage in K8s after storage class**
+![](Pasted%20image%2020220707233904.png)
+
+
+
 ## Empty dir
 > emptyDir is only for the current pod and can't be shared, and it will be deleted once the pod deleted.
 
@@ -131,6 +157,17 @@ Create the pod
 To know the path of the volume on the host machine
 `docker inspect 3927c864300c03bb188ecb54991f3437796cf4afc8d0816f381f181e044f9a6d`
 > it would be in general: /var/lib/kubelet/pods/156f280e-b951-4424-8516-d5c0539e3100/volumes/kubernetes.io~empty-dir/cache-volume
+
+## Volumes
+Volumes are basic entities in Kubernetes, used to provide storage to containers. A volume can support all types of storage, including network file system (NFS), local storage devices, and cloud-based storage services. You can also build your own storage plugins to support new storage systems. Access to volumes can be achieved directly via pods or through persistent volumes
+
+```
+The kubernetes volume in its simplest form is a directory that's attached to a pod and mounted 
+to one or more containers within the pod.
+```
+
+## Container Storage Interface (CSI)
+CSI is a Kubernetes extension that simplifies storage management. Before CSI, users needed to integrate the data store’s device driver with Kubernetes, which was quite complex. CSI provides an extensible plugin architecture, so you can easily add plugins that support the storage devices and services used in your organization.
 
 ## Host path
 
