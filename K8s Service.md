@@ -2,7 +2,6 @@
 In Kubernetes, a Service is an abstraction which defines a logical set of Pods and a policy by which to access them. 
 
 A “service” is defined as the combination of a group of pods, and a policy to access them
-
 The set of Pods targeted by a Service is usually determined by a [selector](https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/).
 
 `k8s def:` An abstract way to expose an application running on a set of [Pods](https://kubernetes.io/docs/concepts/workloads/pods/) as a network service.
@@ -50,10 +49,9 @@ spec:                #no type specified here
 ## Load balancer
 This is the default method for many Kubernetes installations in the cloud, and it works great. It supports multiple protocols and multiple ports per service. But by default it uses an IP for every service, and that IP is configured to have its own load balancer configured in the cloud. These add costs and overhead that is overkill for essentially every cluster with multiple services, which is almost every cluster these days.
 
-
 Exposes the Service externally using a cloud provider's load balancer. `NodePort` and `ClusterIP` Services, to which the external load balancer routes, are automatically created.
 
-load balancer module only works out-of-the-box on the largest public clouds for various reasons.
+Load balancer module only works out-of-the-box on the largest public clouds for various reasons.
 
 ### Load Balancers in the Cloud vs on Bare Metal
 There is an advantage to using the Kubernetes Load Balancer feature on the biggest public clouds. Through the cloud controller, Kubernetes will automatically provision and deprovision the required external IP and associated load balancer, and the nodes it will connect to in the cluster.
@@ -196,7 +194,7 @@ Note: https is not yet configured.
 - evaluates all the rules
 - manages redirections
 - entry point to the cluster
-- Many third party implementation and Nginix ingress controller is one of the popular ones.
+- Many third party implementation are available and Nginix ingress controller is one of the popular ones.
 
 `Need to implement ingress controller that evaluates and process ingress rules, for the ingress to work` 
 
