@@ -287,13 +287,22 @@ Ref: https://github.com/marcel-dempers/docker-development-youtube-series/tree/ma
 (this is forked)
 https://www.youtube.com/watch?v=jvhKOAyD8S8
 
+![](Pasted%20image%2020220805145438.png)
+
+![](Pasted%20image%2020220805145409.png)
+
 - Roles and role bindings are name space level
 - cluster role and cluster role binding are at cluster level and grant permission to all name spaces.
 
 **Note:** Kubernetes has no concept of users, it trusts certificates that is signed by its CA.
-
 `In managed k8s like AKS,EKS or GKE it uses OAUTH authentication mechanism`.
 
+A **Role** can only be used to grant access to resources in a single name space.
+A **Role Binding** is used to tie the role and the subject (user/group/service account).
+
+## Azure AD and K8s RBAC
+![](Pasted%20image%2020220806150041.png)
+https://github.com/bhaaskara/azure-aks-kubernetes-masterclass/tree/master/21-Azure-AKS-Authentication-and-RBAC/21-03-Kubernetes-RBAC-with-AzureAD-on-AzureAKS
 
 ## Kubeconfig file
 The `kubectl` command-line tool uses kubeconfig files to find the information it needs to choose a cluster and communicate with the API server of a cluster.
