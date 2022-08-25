@@ -30,7 +30,6 @@ K8s cluster comes with 4 default name spaces.
 - Each node has associated lease object in namespace
 - Determines the availability of a node.
 
-
 > kubernetes-dashboard name space comes bydefault with minikube installation, not in standard installation.
 
 ## Why to Use name spaces
@@ -108,4 +107,8 @@ List the global resources / Not part of a name spce
 List the namespaced resources
 `kubectl api-resources --namespace=true`
 
-## resource quotas
+## Resource quotas
+https://kubernetes.io/docs/concepts/policy/resource-quotas/
+
+## Limit Range
+Is used to limit the resource usage at pod/container level.

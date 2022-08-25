@@ -43,8 +43,8 @@ spec:
         ports:
         - containerPort: 80
 ```
+
 1.  Create the Deployment by running the following command:
-    
     ```shell
     kubectl apply -f https://k8s.io/examples/controllers/nginx-deployment.yaml
     ```
@@ -139,7 +139,7 @@ kubectl rollout undo deployment/nginx-deployment --to-revision=2
 kubectl scale deployment/nginx-deployment --replicas=10
 ```
 Autoscale
-> Assuming Horizontal pod autoscaling is enabled in the cluster
+>Assuming Horizontal pod autoscaling is enabled in the cluster
 
 ```shell
 kubectl autoscale deployment/nginx-deployment --min=10 --max=15 --cpu-percent=80
@@ -213,4 +213,3 @@ You can set `.spec.revisionHistoryLimit` field in a Deployment to specify how ma
 ## Deployment strategy
 ### Canary deployment
 https://phoenixnap.com/kb/kubernetes-canary-deployments
-    

@@ -36,7 +36,6 @@ Due to this the entire text is not logged any where, i.e logs or debug info.
   Kubernetes Secrets are, by default, stored unencrypted in the API server's underlying data store (etcd). Anyone with API access can retrieve or modify a Secret, and so can anyone with access to etcd. Additionally, anyone who is authorized to create a Pod in a namespace can use that access to read any Secret in that namespace; this includes indirect access such as the ability to create a Deployment.
 >
 > In order to safely use Secrets, take at least the following steps:
->
 > 1.  [Enable Encryption at Rest](https://kubernetes.io/docs/tasks/administer-cluster/encrypt-data/) for Secrets.
 > 2.  Enable or configure [RBAC rules](https://kubernetes.io/docs/reference/access-authn-authz/authorization/) that restrict reading data in Secrets (including via indirect means).
 > 3.  Where appropriate, also use mechanisms such as RBAC to limit which principals are allowed to create new Secrets or replace existing ones.
@@ -113,7 +112,7 @@ data:
 When you do not have a Docker config file, or you want to use `kubectl` to create a Docker registry Secret, you can do:
 
 ```shell
-kubectl create secret docker-registry secret-tiger-docker \
+kubectl create secret docker-registry <secret_name> \
   --docker-username=tiger \
   --docker-password=pass113 \
   --docker-email=tiger@acme.com \
