@@ -322,7 +322,7 @@ By default, `kubectl` looks for a file named `config` in the `$HOME/.kube`�
 # Horizontal Pod Autoscaler (HPA)
 Deployment.yml
 ```yml
-apiVersion: apps/vl 
+apiVersion: apps/v1 
 kind: Deployment
 metadata: 
   name: php-apache
@@ -330,7 +330,7 @@ spec:
   selector:
     matchLabels:
 	  run: php-apache 
-  replicas: 1I 
+  replicas: 1 
   template: 
     metadata: 
       lables:
