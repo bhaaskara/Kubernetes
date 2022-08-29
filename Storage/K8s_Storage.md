@@ -101,7 +101,7 @@ provisioner: kubernetes.io/aws—ebs
 parameters: 
   type: gp2 
 reclaimPolicy: Retain 
-allowVoIumeExpansion: true 
+allowVolumeExpansion: true 
 mountOptions: 
   - debug 
 volumeBindingMode: Immediate 
@@ -145,13 +145,11 @@ spec:
   - name: cache-volume
     emptyDir: {}
 ```
+
 Create the pod
 `kubectl apply -f <yml>`
-
 `kubectl exec emptydir-test-pd df`
-
 `kubectl exec -it emptydir-test-pd -- /bin/bash`
-
 `kubectl describe pod emptydir-test-pd`
 
 To know the path of the volume on the host machine
@@ -199,12 +197,14 @@ When creating a PV, Kubernetes documentation recommends the following:
 
 ### Limiting Storage Resource Consumption
 It is advised to place limits on container usage of storage, to reflect the amount of storage actually available in the local data center, or the budget available for cloud storage resources.  
+
 There are two main ways to limit storage consumption by containers:
- - Resource Quotas—limits the amount of resources, including storage, CPU and memory, that can be used by all containers within a Kubernetes namespace.
- - StorageClasses—a StorageClass can limit the amount of storage provisioned to containers in response to a PVC.
+ - Resource Quotas - limits the amount of resources, including storage, CPU and memory, that can be used by all containers within a Kubernetes namespace.
+ - StorageClasses - a StorageClass can limit the amount of storage provisioned to containers in response to a PVC.
 
 ### Resource Requests and Limits
 Kubernetes provides resource requests that help you manage resource consumption allowed for individual containers.
 A resource limit can be specified for temporary storage. Setting resource requests and limits can help prevent containers from being constrained by resource scarcity on container hosts, or taking up too many resources unexpectedly.  
 Use this command to ensure that all containers in a pod have resource requests and limits:
+
 `kubectl describe pod -n {your_namespace} {your_pod}` 
