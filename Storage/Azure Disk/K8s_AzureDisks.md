@@ -48,3 +48,17 @@ If we delete cluster, it will delete the disk
 ## Azure Disk default storage classes in K8s
 ![](Pasted%20image%2020220705220507.png)
 
+# PersistentVolumeClaim (PVC)
+```yml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: azure-managed-disk-pvc
+spec:
+  accessModes:
+  - ReadWriteOnce
+  storageClassName: managed-premium-retain-sc
+  resources:
+    requests:
+      storage: 5Gi    
+```
