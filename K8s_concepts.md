@@ -473,7 +473,7 @@ The following example demonstrates how to implement a liveness probe by using th
 _...contents omitted..._
 livenessProbe:
   tcpSocket:
-    port: 8080 **(1)**
+    port: 8080 #(1)
   initialDelaySeconds: 15
   timeoutSeconds: 1
 _...contents omitted..._

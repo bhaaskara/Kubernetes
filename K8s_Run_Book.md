@@ -312,6 +312,48 @@ spec:
     storage: 5Gi
 ```
 
+# K8s Backup and Restore
+## etcd
+- All Kubernetes objects are stored on etcd 
+- Periodically backing up the etcd cluster data is important to recover Kubernetes clusters under 
+disaster scenarios 
+- The snapshot file contains all the Kubernetes states and critical information 
+- etcd supports built-in snapshot, so backing up an etcd cluster is easy 
+- Restore from the snapshot
+	`ETCDCTL_API=3 etcdctl snapshot restore snapshotdb`
+	ETCD api version can be found with - `etcdctl version`
+
+## Cluster certificates
+- First need to have CA Authority to create Certs 
+- Client certificates 
+	- Admin Client certificate 
+	- Kubelet Client certificate 
+	- Controller Manager Client 
+	- Kube Proxy Client 
+	- Kube Scheduler Client 
+- API Server Certificates 
+- Service Account Key pairs 
+- Move the files onto the appropriate servers 
+
+# K8s Upgrade
+##  Upgrade Control plane nodes
+- Determine which version to upgrade to 
+- Upgrading control plane nodes 
+	- On your first control plane node, upgrade kubeadm: 
+	- Drain the control plane node: 
+	- On the control plane node, run: sudo kubeadm upgrade plan 
+	- Choose a version to upgrade to and run : `sudo kubeadm upgrade apply v1.18.x` 
+	- `kubectl uncordon <cp-node-name>` 
+- Upgrade additional control plane nodes 
+	- sudo kubeadm upgrade node 
+##  Upgrade worker node kubeadm
+- Upgrade kubeadm on all worker nodes 
+- Drain the node: `kubectl drain <node-to-drain> —ignore-daemonsets` 
+- Execute the upgrade cmd: `sudo kubeadm upgrade node` 
+- Upgrade kubelet and kubectl 
+- Restart the kubelet 
+- Uncordon the node 
+- Verify the status of the cluster 
 # K8s Issues and trouble shooting
 ## Pod trouble shooting
 ```
