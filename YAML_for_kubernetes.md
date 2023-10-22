@@ -159,3 +159,7 @@ FIELDS:
 ```
 
 > As you can see , name and image are of type string which means , you have to provide a string value to it.
+
+**YAML Pass multiline string to a variable**
+filter: |
+   resource.type=gce_network AND jsonPayload.event_subtype="compute.networks.insert" OR jsonPayload.event_subtype="compute.networks.patch" OR jsonPayload.event_subtype="compute.networks.delete" OR jsonPayload.event_subtype="compute.networks.removePeering" OR jsonPayload.event_subtype="compute.networks.addPeering"
