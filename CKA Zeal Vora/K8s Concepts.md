@@ -1,27 +1,5 @@
-# Container Orchestration
-Container orchestration is all about managing the life cycles of containers, especially in   
-large, dynamic environments.
 
-Container Orchestration can be used to perform lot of tasks, some of them includes:   
-- Provisioning and deployment of containers   
-- Scaling up or removing containers to spread application load evenly   
-- Movement of containers from one host to another if there is a shortage of resources   
-- Load balancing of service discovery between containers   
-- Health monitoring of containers and hosts
 
-## Orchestration solutions
-There are many container orchestration solutions which are available, some of the   
-popular ones include:   
-- Docker Swarm   
-- Kubernetes   
-- Apache Mesos   
-- Elastic Container Service (A WS ECS)   
-There are also various container orchestration platforms available like EKS, AKS and GKE.
-
-# Kubernetes
-Kubernetes (K8s) is an open-source container orchestration engine developed by Google.   
-It was originally designed by Google, and is now maintained by the Cloud Native Computing   
-Foundation.
 
 ## K8s Architecture
 ![](K8s_Architecture.png)
@@ -34,7 +12,7 @@ There are multiple ways to get started with fully functional kubernetes environm
 3. Install & Configure Kubernetes Manually (Hard Way)
 
 # K8s components
-- kubrctl
+- kubectl
 
 ## Kubectl
 The Kubernetes command-line tool, kubectl, allows you to run commands against Kubernetes   
@@ -48,11 +26,16 @@ and these details will be in kubeconfig file.
 
 ![](kubeconfig.png)
 # K8s Objects
-what is k8s onject?
-..
+The resources we create in k8s are referred to as objects, like pods, service etc..
+Once you create the object, the k8s system will constantly work on to ensure that object exists.
+
 There are various ways in which we can configure an Kubernetes Object.   
 - First approach is through the kubectl commands.   
 - Second approach is through configuration file written in YAML.
+	- Advantages of using config files
+		- Integrates well with change review processes. 
+		- Provides the source of record on what is live within the Kubernetes cluster. 
+		- Easier to troubleshoot changes with version control. 
 # POD
 A Pod in Kubernetes represents a group of one or more application containers , and some shared
 resources for those containers.
@@ -66,3 +49,32 @@ Containers within a Pod share an IP address and port space, and can find each ot
 - A Node is a worker machine in Kubernetes.   
 - Each Node is managed by the Master.   
 - A Node can have multiple pods.
+
+# K8S Architecture
+
+K8s follows master and worker node architecture, master node manages the worker nodes and the workloads (Pods) in the cluster.
+Master node (also referred as control plane) make global decisions about the cluster (for example, scheduling), as well as detecting and responding to cluster events, while worker nodes host the Pods that are the components of the application workload.
+
+![image](https://user-images.githubusercontent.com/41310048/137490691-8e19d883-b057-4b2e-94da-acd8a3e60dfe.png)
+![image](https://user-images.githubusercontent.com/41310048/137490773-642c96de-bda9-4462-9554-70b2363bf428.png)
+![](K8s_Arch1.png)
+
+## K8S Components
+**Master components**
+
+Component name | Description 
+:-- |:-- 
+kube-apiserver |Component on the master that exposes the K8S API.
+etcd | Database, that stores data in Key-vaule pairs for all cluster data.
+kube-scheduler | component that watches newly created pods that have no node and assigned and selects a node for them to run on
+kube-controller-manager | Responsible for controlling various aspects, including node controller, replication controller etc.. 
+cloud-controller-manager | Runs controllers that interact with the underlying cloud providers. 
+
+**Worker Node components**
+Component name | Description 
+:-- |:-- 
+kubelet |An agent that runs on each node in the cluster. it make sure the PODs are running in the node
+kube-proxy | Acts as a network proxy which maintains network rules on the host and performing connection forwarding.
+Container runtime | Software which is responsible for running containers, ex: docker, containerD.
+
+ 

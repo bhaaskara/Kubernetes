@@ -28,70 +28,33 @@
     + [Ingress configuration](#ingress-configuration)
 - [K8s monitoring using prometheus](#k8s-monitoring-using-prometheus)
 
-# Kubernetes Basics
- 
+# Container Orchestration
+Container orchestration is all about managing the life cycles of containers, especially in   
+large, dynamic environments.
+
+Container Orchestration can be used to perform lot of tasks, some of them includes:   
+- Provisioning and deployment of containers   
+- Scaling up or removing containers to spread application load evenly   
+- Movement of containers from one host to another if there is a shortage of resources   
+- Load balancing of service discovery between containers   
+- Health monitoring of containers and hosts
+
+## Orchestration solutions
+There are many container orchestration solutions which are available, some of the 
+popular ones include:   
+- Docker Swarm   
+- Kubernetes   
+- Apache Mesos   
+- Elastic Container Service (A WS ECS)   
+There are also various container orchestration platforms available like EKS, AKS and GKE.
+# Kubernetes Basics 
 ## What is Kubernetes
-Kubernetes is a container archestration tool.
-is portable,extensible,and open-source platform for managing containerized workloads and services, that facilitates both declarative configuration and automation.
+- Kubernetes is a container orchestration tool.
+- Its portable, extensible, and open-source platform for managing containerized workloads and services, that facilitates both declarative configuration and automation.
+- The name Kubernetes originates from Greek, meaning helmsman or pilot.   
+- **K8s** as an abbreviation results from counting the eight letters between the "K" and the "s".  
+- Google open-sourced the Kubernetes project in 2014. Kubernetes combines over 15 years of Google's experience running production workloads at scale with best-of-breed ideas and practices from the community.
 
-The name Kubernetes originates from Greek, meaning helmsman or pilot.   
-**K8s** as an abbreviation results from counting the eight letters between the "K" and the "s".  
-
-Google open-sourced the Kubernetes project in 2014. Kubernetes combines over 15 years of Google's experience running production workloads at scale with best-of-breed ideas and practices from the community.
- 
-# K8s Capacity
-At V1.19, K8s supports clusters with upto 5000 nodes.  
-More specifically it supports configuration that meets all of the following criteria.  
-Object | Limit
-:-----  | :-----
-Nodes | 5000
-Total Pods | 150000
-Total Containers | 300000
-Pods per node | 100
-
-# Kubernetes best practices
-## Name spaces
-- multiple virtual cluster boundary with in one physical cluster.
-- provides scope for naming
-- devide cluster resources to namespaces
-- useful for namespace specific access
-## Resource requests and limits
-- set appropriate requests and limits for your container
-- set resource limits for namespaces using ResourceQuotas
-- When CPU reaches limit, its throttles
-- When memory reaches limit, POD will be evicted
-- Proper requests and limits save cost as well
-
-## How do you cost/performace optimize your k8s app ?
-Detect CPU/Memory waste - Utiliza metrics server.
-ex:  - Cloudwatch container insights (AWS)
-       - kubecost
-       - cloudhealth
-       - kubernetes resource report
-
-## Use readyness and liveness probes
-## Secure k8s
-- k8s security
-  - Application security
-    - Pod, Namespace, Node
-    - RBAC, IRSA
-  - DevsecOps - DevOps + Security = security of the container devops lifecycle
-    - Authorization
-    - Scan repository
-    - Scan running container
-  - Security compliance 
-    - FedRAMP, HIPAA, SOC etc..
-## Day 2 ops
-  - Detective controls
-    - collect and analyze audit logs
-    - Alarm on certain behavior
-- Understand k8s termination lifecycle
-  - Use rolling update
-  - App handle graceful termination
-- Incident response
-  - Identify and isolate
-  - run load and penetration testing
-  
 # K8s Architecture
 K8s follows master and worker node architecture, master node manages the worker nodes and the workloads (Pods) in the cluster.
 Master node (also referred as control plane) make global decisions about the cluster (for example, scheduling), as well as detecting and responding to cluster events, while worker nodes host the Pods that are the components of the application workload.
@@ -123,25 +86,34 @@ The control plane's components make global decisions about the cluster (for exam
 
 Control plane setup that runs across multiple VMs.
 [K8s HA](https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/high-availability/) 
-
-
-
 #### Kube API Server
-The core of Kubernetes' control plane is the API server and the HTTP API that it exposes.  
-Users, the different parts of your cluster, and external components all communicate with one another through the API server.  
-The API server is the front end for the Kubernetes control plane.  
-kube-apiserver is designed to scale horizontally—that is, it scales by deploying more instances.  
-You can run several instances of kube-apiserver and balance traffic between those instances.
-
-Kubectl command’s job is to connect to kube-apiserver and communicate with it using the Kubernetes API.  
-kube-apiserver also authenticates incoming requests, determines whether they are authorized and valid, and manages admission control.  
-But it’s not just kubectl that talks with kube-apiserver. In fact, any query or change to the cluster’s state must be addressed to the kube-apiserver.
-
+- The API server is the front end for the Kubernetes control plane.  
+- The core of Kubernetes' control plane is the API server and the HTTP API that it exposes.  
+- Users, the different parts of your cluster, and external components all communicate with one another through the API server.  
+- kube-apiserver is designed to scale horizontally—that is, it scales by deploying more instances.  
+  You can run several instances of kube-apiserver and balance traffic between those instances.
+- Kubectl command’s job is to connect to kube-apiserver and communicate with it using the Kubernetes API.  
+- kube-apiserver also authenticates incoming requests, determines whether they are authorized and valid, and manages admission control.  
+- But it’s not just kubectl that talks with kube-apiserver. In fact, any query or change to the cluster’s state must be addressed to the kube-apiserver.
+- The API Server is the only Kubernetes component that connects to etcd; all the other components
+   must go through the API Server to work with the cluster state.
 #### etcd
-etcd is the cluster’s database.  
-Its job is to reliably store the state of the cluster. This includes all the cluster configuration data; and more dynamic information such as what nodes are part of the cluster, what Pods should be running, and where they should be running.  
-You never interact directly with etcd; instead, kube-apiserver interacts with the database on behalf of the rest of the system.
+etcd is a distributed reliable key-value store.
 
+In a Linux environment, all the configurations are stored in the /etc directory.
+etcd is inspired from that and there is an addition of d which is for distributed.
+
+etcd reliably stores the configuration data of the Kubernetes cluster, representing the state of the
+cluster (what nodes exist in the cluster, what pods should be running, which nodes they are
+running on, and a whole lot more) at any given point of time.
+
+- A Kubernetes cluster stores all its data in etcd.
+- Any node crashing or process dying causes values in etcd to be changed.
+- Whenever you create something with kubectl create / kubectl run will create an entry in the etcd.
+
+**Note:** You never interact directly with etcd; instead, kube-apiserver interacts with the database on behalf of the rest of the system.
+etcdctl is the command line tool to interact with etcd, but recommended not to use it.
+The API Server is the only Kubernetes component that connects to etcd.
 #### Kube-scheduler
 Control plane component that watches for newly created Pods with no assigned node, and selects a node for them to run on.  
 But it doesn’t do the work of actually launching Pods on Nodes. Instead, whenever it discovers a Pod object that doesn’t yet have an assignment to a node, it
@@ -195,6 +167,61 @@ Kubernetes supports several container runtimes: Docker, containerd, CRI-O, an
 
 </details>
 
+
+## K8s Capacity
+At V1.19, K8s supports clusters with upto 5000 nodes.  
+More specifically it supports configuration that meets all of the following criteria.  
+
+Object | Limit
+:-----  | :-----
+Nodes | 5000
+Total Pods | 150000
+Total Containers | 300000
+Pods per node | 100
+
+# Kubernetes best practices
+## Name spaces
+- multiple virtual cluster boundary with in one physical cluster.
+- provides scope for naming
+- devide cluster resources to namespaces
+- useful for namespace specific access
+## Resource requests and limits
+- set appropriate requests and limits for your container
+- set resource limits for namespaces using ResourceQuotas
+- When CPU reaches limit, its throttles
+- When memory reaches limit, POD will be evicted
+- Proper requests and limits save cost as well
+
+## How do you Cost/Performace optimize your k8s app ?
+Detect CPU/Memory waste - Utiliza metrics server.
+ex:  - Cloudwatch container insights (AWS)
+       - kubecost
+       - cloudhealth
+       - kubernetes resource report
+
+## Use readyness and liveness probes
+## Secure k8s
+- k8s security
+  - Application security
+    - Pod, Namespace, Node
+    - RBAC, IRSA
+  - DevsecOps - DevOps + Security = security of the container devops lifecycle
+    - Authorization
+    - Scan repository
+    - Scan running container
+  - Security compliance 
+    - FedRAMP, HIPAA, SOC etc..
+## Day 2 ops
+  - Detective controls
+    - collect and analyze audit logs
+    - Alarm on certain behavior
+- Understand k8s termination lifecycle
+  - Use rolling update
+  - App handle graceful termination
+- Incident response
+  - Identify and isolate
+  - run load and penetration testing
+  
 
 # Kubernetes Networking
 ## Service
