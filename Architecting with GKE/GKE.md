@@ -48,3 +48,6 @@ A pod can have one or more containers.
 When there are more containers they are tightly coupled and share the resources like network and storage.
 K8s assign a unique IP address to the pod and the containers in the pod share the network namespace including the IP address.
 They can communicate using local host, 127.0.0.1
+
+LOOKS GOOD NOW
+
