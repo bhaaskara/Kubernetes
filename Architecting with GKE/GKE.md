@@ -1,5 +1,5 @@
 ## GKE
-Google Kubenetes engine is a managed service hosted on GCP.
+Google Kubernetes engine is a managed service hosted on GCP.
 It designed to deploy, manage and scale K8s.
 
 - GKE is fully managed

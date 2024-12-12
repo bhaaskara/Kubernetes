@@ -1,3 +1,14 @@
+# Image
+Application and its dependencies are called an image.
+# Container
+container is simply a running instance of an image
+# Docker (Container Run Time)
+To build and run container images need software. i.e container run time.
+one open source option is Docker.
+Docker
+	Open source.
+	can be used to create and run applications in containers.
+	But it can't orchestrate applications at scale.
 # Pod
 Pods are the basic unit for running containers inside kubernetes.  
 A pod provides a way to set environment variables, mount storage and feed other information into a container.  
