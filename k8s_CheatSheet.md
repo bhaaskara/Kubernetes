@@ -26,26 +26,28 @@ List the taints
 Remove the taints
 
 # Nodes
-Usage | Command
-:-- | :--
-    Get the status | `kubectl get nodes`
+| Usage          | Command             |
+| :------------- | :------------------ |
+| Get the status | `kubectl get nodes` |
 # Pods
-Usage | Command
-:---- | :------
-List the pods | `kubectl get pods`
-Pods Ip address | `kubectl get pods -o wide`
-Pod logs | `kubectl logs dapi-test-pod`
-container logs | `kubectl logs <pod_name> -c <container_name>`
-Init container logs | `kubectl logs <pod_name> -c <init_container_name>`
-Get the pod yaml | `kubectl get pod <pod_name> -o yaml`
-Delete a pod | `kubectl delete pod <pod_name>`
+| Usage               | Command                                            |
+| :------------------ | :------------------------------------------------- |
+| List the pods       | `kubectl get pods`                                 |
+| Pods Ip address     | `kubectl get pods -o wide`                         |
+| Pod logs            | `kubectl logs dapi-test-pod`                       |
+| container logs      | `kubectl logs <pod_name> -c <container_name>`      |
+| Init container logs | `kubectl logs <pod_name> -c <init_container_name>` |
+| Get the pod yaml    | `kubectl get pod <pod_name> -o yaml`               |
+| Delete a pod        | `kubectl delete pod <pod_name>`                    |
+|                     |                                                    |
+|                     |                                                    |
 
 
 ### Pod labels
-Usage | Command
-:---- | :------
-List all labels | `kubectl get pods --show-labels`
-List pods with label | `kubectl get pods -Lapp -Ltier -Lrole`
+| Usage                | Command                                |
+| :------------------- | :------------------------------------- |
+| List all labels      | `kubectl get pods --show-labels`       |
+| List pods with label | `kubectl get pods -Lapp -Ltier -Lrole` |
  |              | `kubectl get pods --selector="app=redis,role=slave" --show-labels`
  |              | `kubectl get pods --selector="role in (master,slave)" --show-labels`
 List pods with lable app    | `kubectl get pods --selector="app" --show-labels`

@@ -5,6 +5,49 @@ A Deployment is a higher-order abstraction that controls deploying and maintaini
 A _Deployment_ provides declarative updates for [Pods](https://kubernetes.io/docs/concepts/workloads/pods/) and [ReplicaSets](https://kubernetes.io/docs/concepts/workloads/controllers/replicaset/)  
 You describe a _desired state_ in a Deployment, and the Deployment [Controller](https://kubernetes.io/docs/concepts/architecture/controller/) changes the actual state to the desired state at a controlled rate.  
 
+## Deployment status
+
+A Deployment enters various states during its lifecycle. It can be [progressing](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#progressing-deployment) while rolling out a new ReplicaSet, it can be [complete](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#complete-deployment), or it can [fail to progress](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#failed-deployment).
+- Progressing
+- Complete
+- Failed
+### Progressing Deployment
+Kubernetes marks a Deployment as _progressing_ when one of the following tasks is performed:
+
+-   The Deployment creates a new ReplicaSet.
+-   The Deployment is scaling up its newest ReplicaSet.
+-   The Deployment is scaling down its older ReplicaSet(s).
+-   New Pods become ready or available (ready for at least [MinReadySeconds](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#min-ready-seconds)).
+
+You can monitor the progress for a Deployment by using `kubectl rollout status`.
+
+### Complete Deployment
+Kubernetes marks a Deployment as _complete_ when it has the following characteristics:
+
+-   All of the replicas associated with the Deployment have been updated to the latest version you've specified, meaning any updates you've requested have been completed.
+-   All of the replicas associated with the Deployment are available.
+-   No old replicas for the Deployment are running.
+
+You can check if a Deployment has completed by using `kubectl rollout status`
+
+### Failed Deployment
+Your Deployment may get stuck trying to deploy its newest ReplicaSet without ever completing. This can occur due to some of the following factors:
+
+-   Insufficient quota
+-   Readiness probe failures
+-   Image pull errors
+-   Insufficient permissions
+-   Limit ranges
+-   Application runtime misconfiguration
+
+## Operating on a failed deployment
+All actions that apply to a complete Deployment also apply to a failed Deployment.   
+You can scale it up/down, roll back to a previous revision, or even pause it if you need to apply multiple tweaks in the Deployment Pod template.
+
+## Clean up Policy
+You can set `.spec.revisionHistoryLimit` field in a Deployment to specify how many old ReplicaSets for this Deployment you want to retain. The rest will be garbage-collected in the background. By default, it is 10.
+
+> 	**Note:** Explicitly setting this field to 0, will result in cleaning up all the history of your Deployment thus that Deployment will not be able to roll back.
 ## Use cases
 - [Create a Deployment to rollout a ReplicaSet](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#creating-a-deployment).  
     The ReplicaSet creates Pods in the background. Check the status of the rollout to see if it succeeds or not.
@@ -18,6 +61,11 @@ You describe a _desired state_ in a Deployment, and the Deployment [Controller](
 - [Clean up older ReplicaSets](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#clean-up-policy) that you don't need anymore.
 
 ## Creating a Deployment
+Deployment can be created in 3 ways.
+- kubectl apply -f [deployment_file]
+- kubectl run [deployment-name] --image [image]:[tag] --replicas 3 --labels [key]:[value] --port 8080 --generator deployment/apps.v1 --save.config
+- use GKE workloads menu in GCP console
+
 The following is an example of a Deployment.  
 It creates a ReplicaSet to bring up three `nginx` Pods:
 ```yml
@@ -168,48 +216,12 @@ In some cases, you may need to update resource fields that cannot be updated onc
 kubectl replace -f https://k8s.io/examples/application/nginx/nginx-deployment.yaml --force
 ```
 
-## Deployment status
 
-A Deployment enters various states during its lifecycle. It can be [progressing](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#progressing-deployment) while rolling out a new ReplicaSet, it can be [complete](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#complete-deployment), or it can [fail to progress](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#failed-deployment).
-
-### Progressing Deployment
-Kubernetes marks a Deployment as _progressing_ when one of the following tasks is performed:
-
--   The Deployment creates a new ReplicaSet.
--   The Deployment is scaling up its newest ReplicaSet.
--   The Deployment is scaling down its older ReplicaSet(s).
--   New Pods become ready or available (ready for at least [MinReadySeconds](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#min-ready-seconds)).
-
-You can monitor the progress for a Deployment by using `kubectl rollout status`.
-
-### Complete Deployment
-Kubernetes marks a Deployment as _complete_ when it has the following characteristics:
-
--   All of the replicas associated with the Deployment have been updated to the latest version you've specified, meaning any updates you've requested have been completed.
--   All of the replicas associated with the Deployment are available.
--   No old replicas for the Deployment are running.
-
-You can check if a Deployment has completed by using `kubectl rollout status`
-
-### Failed Deployment
-Your Deployment may get stuck trying to deploy its newest ReplicaSet without ever completing. This can occur due to some of the following factors:
-
--   Insufficient quota
--   Readiness probe failures
--   Image pull errors
--   Insufficient permissions
--   Limit ranges
--   Application runtime misconfiguration
-
-## Operating on a failed deployment
-All actions that apply to a complete Deployment also apply to a failed Deployment.   
-You can scale it up/down, roll back to a previous revision, or even pause it if you need to apply multiple tweaks in the Deployment Pod template.
-
-## Clean up Policy
-You can set `.spec.revisionHistoryLimit` field in a Deployment to specify how many old ReplicaSets for this Deployment you want to retain. The rest will be garbage-collected in the background. By default, it is 10.
-
-> **Note:** Explicitly setting this field to 0, will result in cleaning up all the history of your Deployment thus that Deployment will not be able to roll back.
 
 ## Deployment strategy
 ### Canary deployment
 https://phoenixnap.com/kb/kubernetes-canary-deployments
+
+# Deployment commands
+kubectl get deployment [deployment_name]
+kubectl describe deploymnet [deployment_name]
