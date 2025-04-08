@@ -1,8 +1,3 @@
-
-
-
-## K8s Architecture
-![](K8s_Architecture.png)
 ## K8s Installation
 There are multiple ways to get started with fully functional kubernetes environment   
 1. Use the Managed Kubernetes Service
@@ -62,13 +57,13 @@ Master node (also referred as control plane) make global decisions about the clu
 ## K8S Components
 **Master components**
 
-Component name | Description 
-:-- |:-- 
-kube-apiserver |Component on the master that exposes the K8S API.
-etcd | Database, that stores data in Key-vaule pairs for all cluster data.
-kube-scheduler | component that watches newly created pods that have no node and assigned and selects a node for them to run on
-kube-controller-manager | Responsible for controlling various aspects, including node controller, replication controller etc.. 
-cloud-controller-manager | Runs controllers that interact with the underlying cloud providers. 
+| Component name           | Description                                                                                                    |
+| :----------------------- | :------------------------------------------------------------------------------------------------------------- |
+| kube-apiserver           | Component on the master that exposes the K8S API.                                                              |
+| etcd                     | Database, that stores data in Key-vaule pairs for all cluster data.                                            |
+| kube-scheduler           | component that watches newly created pods that have no node and assigned and selects a node for them to run on |
+| kube-controller-manager  | Responsible for controlling various aspects, including node controller, replication controller etc..           |
+| cloud-controller-manager | Runs controllers that interact with the underlying cloud providers.                                            |
 
 **Worker Node components**
 Component name | Description 
