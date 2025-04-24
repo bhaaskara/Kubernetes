@@ -17,3 +17,5 @@ Ref: [Install Tools | Kubernetes](https://kubernetes.io/docs/tasks/tools/)
 # <span style="color:skyblue">This is a blue heading</span>
 
 ## <span style="color:orange">This is a Orange sub heading</span>
+
+<h1 style="color:blue;">This is a blue heading</h1>
