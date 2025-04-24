@@ -17,7 +17,7 @@ Containers within the same Pod can communicate through localhost, 127.0.0.1. A P
 As well as application containers, a Pod can contain `init containers` that run during Pod startup.  
 You can also inject *ephemeral containers* for debugging if your cluster offers this.  
 
-> Pods are generally not created directly and are created using workload resources, like Deployments, statefulsets or Daemonsets
+> Pods are generally not created directly and are created using workload resources, like Deployments, statefulsets or Daemonsets.
 > Be careful: Pods are not self-healing.
 > Restarting a container in a Pod should not be confused with restarting a Pod. 
 > A Pod is not a process, but an environment for running container(s). A Pod persists until it is deleted.

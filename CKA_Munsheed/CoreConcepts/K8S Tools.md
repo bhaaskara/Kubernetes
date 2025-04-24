@@ -13,3 +13,7 @@ To connect to the Kubernetes Master, there are two important data which kubectl 
 and these details will be in kubeconfig file.
 
 Ref: [Install Tools | Kubernetes](https://kubernetes.io/docs/tasks/tools/)
+
+# <span style="color:skyblue">This is a blue heading</span>
+
+## <span style="color:orange">This is a Orange sub heading</span>

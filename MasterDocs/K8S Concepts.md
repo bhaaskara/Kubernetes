@@ -22,4 +22,3 @@ Object status is the current state provided by K8S.
 ## Declarative management
 you define the desired state, and k8s takes cares of maintaining/changing the current state to match the desired state of the objects. 
 
-## K8S Components
