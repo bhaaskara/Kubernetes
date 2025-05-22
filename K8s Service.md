@@ -1,16 +1,3 @@
-# What is a k8s service
-In Kubernetes, a Service is an abstraction which defines a logical set of Pods and a policy by which to access them. 
-
-A “service” is defined as the combination of a group of pods, and a policy to access them
-The set of Pods targeted by a Service is usually determined by a [selector](https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/).
-
-`k8s def:` An abstract way to expose an application running on a set of [Pods](https://kubernetes.io/docs/concepts/workloads/pods/) as a network service.
-
-# Different services types
-- Cluster IP - Default type
-- Node port
-- Load balancer
-- Headless
 
 ## ClusterIP
 - Exposes the Service on a cluster-internal IP. 
@@ -32,8 +19,7 @@ spec:                #no type specified here
 ```
 
 ![[Pastedimage20220107151525.png]](/Images/Pastedimage20220107151525.png)
-- pods are identified by the selectors, i.e pod labels  
-- **all the selectors should match with the pod labels, not just one of them**
+-
 
 ## Node Port
 - Exposes the Service on each Node's IP at a static port (the `NodePort`). 
