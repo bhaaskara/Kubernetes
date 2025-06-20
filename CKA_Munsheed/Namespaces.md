@@ -1,11 +1,11 @@
 # K8s namespaces
 Namespaces are a way to organize clusters into virtual sub-clusters — they can be helpful when different teams or projects share a Kubernetes cluster. Any number of namespaces are supported within a cluster, each logically separated from others but with the ability to communicate with each other.
 
-Namespaces provide a scope for names. Names of resources need to be unique within a namespace, but not across namespaces. Namespaces cannot be nested inside one another and each Kubernetes resource can only be in one namespace.
-
-Namespaces are a way to divide cluster resources between multiple users (via [resource quota](https://kubernetes.io/docs/concepts/policy/resource-quotas/)).
-
-It is not necessary to use multiple namespaces to separate slightly different resources, such as different versions of the same software: use [labels](https://kubernetes.io/docs/concepts/overview/working-with-objects/labels) to distinguish resources within the same namespace.
+- Namespaces provide a scope for names. Names of resources need to be unique within a namespace, but not across namespaces. 
+- Namespaces cannot be nested inside one another
+- Each Kubernetes resource can only be in one namespace.
+- Namespaces are a way to divide cluster resources between multiple users (via [resource quota](https://kubernetes.io/docs/concepts/policy/resource-quotas/)).
+  It is not necessary to use multiple namespaces to separate slightly different resources, such as different versions of the same software: use [labels](https://kubernetes.io/docs/concepts/overview/working-with-objects/labels) to distinguish resources within the same namespace.
 
 ## Default name spaces
 K8s cluster comes with 4 default name spaces.
@@ -111,3 +111,40 @@ https://kubernetes.io/docs/concepts/policy/resource-quotas/
 
 ## Limit Range
 Is used to limit the resource usage at pod/container level.
+
+## Commands
+```
+$kubectl get ns
+NAME              STATUS   AGE
+default           Active   4m58s
+dev               Active   19s
+finance           Active   19s
+kube-node-lease   Active   4m58s
+kube-public       Active   4m58s
+kube-system       Active   4m58s
+manufacturing     Active   19s
+marketing         Active   19s
+prod              Active   19s
+research          Active   19s
+```
+
+```
+$kubectl get pods -n research
+NAME    READY   STATUS             RESTARTS      AGE
+dna-1   0/1     CrashLoopBackOff   3 (33s ago)   76s
+dna-2   0/1     CrashLoopBackOff   3 (28s ago)   76s
+```
+
+```
+$kubectl run redis --image=redis -n finance
+pod/redis created
+```
+
+```
+$kubectl get pods --all-namespaces
+NAMESPACE       NAME                                      READY   STATUS             RESTARTS      AGE
+dev             redis-db                                  1/1     Running            0             3m42s
+finance         payroll                                   1/1     Running            0             3m41s
+finance         redis                                     1/1     Running            0             75s
+```
+

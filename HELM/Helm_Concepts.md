@@ -1,6 +1,6 @@
 **Helm synopsys**
 ```
-Helm is package manager for Kubernetes.
+Helm is a package manager for Kubernetes.
 Helm deployes all the reources defined in yaml files under ./<chartname>/templates to k8s cluster.
 Helm should be installed and configured on a machine with k8s access through kubectl.
 and while deploying it uses the values defined in values.yaml (./<chartname>/values.yaml)

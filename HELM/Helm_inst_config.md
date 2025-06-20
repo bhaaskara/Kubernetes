@@ -2,7 +2,7 @@
 Helm can be installed from
 1. **From binary release**
 2. **From script**
-3. **Throguh package managers**
+3. **Through package managers**
 
 ## From binary release
 1. Download your [desired version](https://github.com/helm/helm/releases)
@@ -20,7 +20,7 @@ curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scrip
 chmod 700 get_helm.sh
 ./get_helm.sh
 ```
-## Throguh package managers
+## Through package managers
 > These are not supported by the Helm project and are not considered trusted 3rd parties.
 ### Debian/Ubuntu
 ```sh
